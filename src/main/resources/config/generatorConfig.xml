@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 <generatorConfiguration>
-    <properties resource="jdbc.properties"></properties>
+    <properties resource="classpath:properties/jdbc.properties"></properties>
     <classPathEntry location="${jdbc.driverLocation}"/>
     <context id="default" targetRuntime="MyBatis3">
         <commentGenerator>
@@ -11,10 +11,10 @@
             <property name="suppressAllComments" value="true"/>
         </commentGenerator>
         <jdbcConnection
-                driverClass="${db.driverClassName}"
-                connectionURL="${db.url}"
-                userId="${db.username}"
-                password="${db.password}">
+                driverClass="${jdbc.driverClassName}"
+                connectionURL="${jdbc.url}"
+                userId="${jdbc.username}"
+                password="${jdbc.password}">
         </jdbcConnection>
         <javaTypeResolver>
             <property name="forceBigDecimals" value="false"/>
