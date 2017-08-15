@@ -4,12 +4,15 @@ import cn.edu.swpu.cins.dao.UserMapper;
 import cn.edu.swpu.cins.dto.request.SignInUser;
 import cn.edu.swpu.cins.dto.response.Const;
 import cn.edu.swpu.cins.dto.response.HttpResult;
+import cn.edu.swpu.cins.dto.response.TokenCache;
 import cn.edu.swpu.cins.entity.User;
 import cn.edu.swpu.cins.service.PasswordService;
 import cn.edu.swpu.cins.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 
 @Service
@@ -28,14 +31,14 @@ public class UserServiceImpl implements UserService {
     public HttpResult<User> login(SignInUser signInUser) {
         int resultCount = userMapper.checkUsername(signInUser.getUsername());
         if (resultCount == 0) {
-            return HttpResult.createByErrorMessage("username is not exited");
+            return HttpResult.createByErrorMessage("Username is not exited");
         }
         User user = userMapper.checkPassword(signInUser.getUsername());
         boolean isMatch = passwordService.match(signInUser.getPassword(), user.getPassword());
         if (!isMatch) {
-            return HttpResult.createByErrorMessage("password error");
+            return HttpResult.createByErrorMessage("Password error");
         } else {
-            return HttpResult.createBySuccess("login success", user);
+            return HttpResult.createBySuccess("Login success", user);
         }
     }
 
@@ -53,9 +56,9 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordService.encode(user.getPassword()));
         int resultCount = userMapper.insert(user);
         if (resultCount == 0) {
-            return HttpResult.createByErrorMessage("signUp fail");
+            return HttpResult.createByErrorMessage("SignUp fail");
         }
-        return HttpResult.createBySuccessMessage("signUp success");
+        return HttpResult.createBySuccessMessage("SignUp success");
     }
 
     public HttpResult<String> checkValid(String str, String type) {
@@ -63,31 +66,41 @@ public class UserServiceImpl implements UserService {
             if (Const.USERNAME.equals(type)) {
                 int resultCount = userMapper.checkUsername(str);
                 if (resultCount > 0) {
-                    return HttpResult.createByErrorMessage("username is exited");
+                    return HttpResult.createByErrorMessage("Username is exited");
                 }
             }
             if (Const.EMAIL.equals(type)) {
                 int resultCount = userMapper.checkEmail(str);
                 if (resultCount > 0) {
-                    return HttpResult.createByErrorMessage("email is exited");
+                    return HttpResult.createByErrorMessage("Email is exited");
                 }
             }
         } else {
-            return HttpResult.createByErrorMessage("illeage parameter");
+            return HttpResult.createByErrorMessage("Illeage parameter");
         }
-        return HttpResult.createBySuccessMessage("valid success");
+        return HttpResult.createBySuccessMessage("Valid success");
     }
 
     public HttpResult getQuestion(String username) {
         HttpResult result = this.checkValid(username, Const.USERNAME);
         if (result.isSuccess()) {
-            return HttpResult.createByErrorMessage("user is not exited");
+            return HttpResult.createByErrorMessage("User is not exited");
         }
         String question = userMapper.selectQuestionByUsername(username);
         if (StringUtils.isNotBlank(question)) {
             return HttpResult.createBySuccess(question);
         }
-        return HttpResult.createByErrorMessage("question is null");
+        return HttpResult.createByErrorMessage("Question is null");
+    }
+
+    public HttpResult<String> checkAnswer(String username, String question, String answer) {
+        int resultCount = userMapper.checkAnswer(username, question, answer);
+        if (resultCount > 0) {
+            String forgetToken = UUID.randomUUID().toString();
+            TokenCache.setKey("token_"+username, forgetToken);
+            return HttpResult.createBySuccess(forgetToken);
+        }
+        return HttpResult.createByErrorMessage("Wrong answer");
     }
 
 

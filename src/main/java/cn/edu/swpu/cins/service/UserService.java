@@ -13,4 +13,6 @@ public interface UserService {
     HttpResult<String> checkValid(String str, String type);
 
     HttpResult<String> getQuestion(String username);
+
+    HttpResult<String> checkAnswer(String username, String question, String answer);
 }

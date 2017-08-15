@@ -55,16 +55,18 @@ public class UserController {
         if (user != null) {
             return HttpResult.createBySuccess(user);
         }
-        return HttpResult.createByErrorMessage("user not login");
+        return HttpResult.createByErrorMessage("User not login");
     }
 
-    @RequestMapping(value = "getQuestion")
+    @RequestMapping(value = "getQuestion", method = RequestMethod.GET)
     @ResponseBody
     public HttpResult<String> getQuestion(String username) {
         return userService.getQuestion(username);
     }
-
-
+    @RequestMapping(value = "checkAnswer", method = RequestMethod.GET)
+    public HttpResult<String> checkAnswer(String username, String question, String answer) {
+        return userService.checkAnswer(username, question, answer);
+    }
 
 
 }
