@@ -49,6 +49,12 @@ public class UserController {
         return userService.signUp(user);
     }
 
+    @RequestMapping(value = "checkValid",method = RequestMethod.POST)
+    @ResponseBody
+    public HttpResult<String> checkValid(String str,String type){
+        return userService.checkValid(str,type);
+    }
+
 
     @RequestMapping(value = "getUserInfo", method = RequestMethod.GET)
     @ResponseBody
