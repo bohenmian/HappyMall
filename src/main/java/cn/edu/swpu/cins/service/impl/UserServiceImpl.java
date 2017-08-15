@@ -97,10 +97,34 @@ public class UserServiceImpl implements UserService {
         int resultCount = userMapper.checkAnswer(username, question, answer);
         if (resultCount > 0) {
             String forgetToken = UUID.randomUUID().toString();
-            TokenCache.setKey("token_"+username, forgetToken);
+            TokenCache.setKey(TokenCache.TOKEN_PREFIX + username, forgetToken);
             return HttpResult.createBySuccess(forgetToken);
         }
         return HttpResult.createByErrorMessage("Wrong answer");
+    }
+
+    public HttpResult<String> resetPassword(String username, String newPassword, String forgetToken) {
+        if (StringUtils.isBlank(forgetToken)) {
+            return HttpResult.createByErrorMessage("Illeage parameter,Token should not null");
+        }
+        HttpResult result = this.checkValid(username, Const.USERNAME);
+        if (result.isSuccess()) {
+            return HttpResult.createByErrorMessage("User is not exited");
+        }
+        String token = TokenCache.getKey(TokenCache.TOKEN_PREFIX + username);
+        if (StringUtils.isBlank(token)) {
+            return HttpResult.createByErrorMessage("Token had expired");
+        }
+        if (StringUtils.equals(forgetToken, token)) {
+            String password = passwordService.encode(newPassword);
+            int rowCount = userMapper.updatePasswordByUsername(username, password);
+            if (rowCount > 0) {
+                return HttpResult.createBySuccess("Reset password success");
+            }
+        } else {
+            return HttpResult.createByErrorMessage("Wrong token");
+        }
+        return HttpResult.createByErrorMessage("Reset password fail");
     }
 
 

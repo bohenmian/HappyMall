@@ -63,10 +63,17 @@ public class UserController {
     public HttpResult<String> getQuestion(String username) {
         return userService.getQuestion(username);
     }
+
     @RequestMapping(value = "checkAnswer", method = RequestMethod.GET)
+    @ResponseBody
     public HttpResult<String> checkAnswer(String username, String question, String answer) {
         return userService.checkAnswer(username, question, answer);
     }
 
+    @RequestMapping(value = "resetPassword", method = RequestMethod.GET)
+    @ResponseBody
+    public HttpResult<String> resetPassword(String username, String newPassword, String forgetToken) {
+        return userService.resetPassword(username, newPassword, forgetToken);
+    }
 
 }

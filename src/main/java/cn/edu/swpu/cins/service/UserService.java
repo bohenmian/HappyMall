@@ -15,4 +15,6 @@ public interface UserService {
     HttpResult<String> getQuestion(String username);
 
     HttpResult<String> checkAnswer(String username, String question, String answer);
+
+    HttpResult<String> resetPassword(String username, String newPassword, String forgetToken);
 }
