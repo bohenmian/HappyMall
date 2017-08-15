@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
         return HttpResult.createByErrorMessage("Wrong answer");
     }
 
-    public HttpResult<String> resetPassword(String username, String newPassword, String forgetToken) {
+    public HttpResult<String> fofgetResetPassword(String username, String newPassword, String forgetToken) {
         if (StringUtils.isBlank(forgetToken)) {
             return HttpResult.createByErrorMessage("Illeage parameter,Token should not null");
         }
@@ -125,6 +125,19 @@ public class UserServiceImpl implements UserService {
             return HttpResult.createByErrorMessage("Wrong token");
         }
         return HttpResult.createByErrorMessage("Reset password fail");
+    }
+
+    public HttpResult<String> resetPassword(String password, String newPassword, User user) {
+        int resultCount = userMapper.checkPassword(passwordService.encode(password), user.getId());
+        if (resultCount == 0) {
+            return HttpResult.createByErrorMessage("old password wrong");
+        }
+        user.setPassword(passwordService.encode(newPassword));
+        int updateCount = userMapper.updateByPrimaryKeySelective(user);
+        if (updateCount > 0) {
+            return HttpResult.createBySuccessMessage("update password success");
+        }
+        return HttpResult.createByErrorMessage("update password fail");
     }
 
 

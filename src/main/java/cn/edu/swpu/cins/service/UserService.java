@@ -16,5 +16,7 @@ public interface UserService {
 
     HttpResult<String> checkAnswer(String username, String question, String answer);
 
-    HttpResult<String> resetPassword(String username, String newPassword, String forgetToken);
+    HttpResult<String> fofgetResetPassword(String username, String newPassword, String forgetToken);
+
+    HttpResult<String> resetPassword(String password, String newPassword, User user);
 }

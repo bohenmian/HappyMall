@@ -70,10 +70,19 @@ public class UserController {
         return userService.checkAnswer(username, question, answer);
     }
 
-    @RequestMapping(value = "resetPassword", method = RequestMethod.GET)
+    @RequestMapping(value = "forgetResetPassword", method = RequestMethod.GET)
     @ResponseBody
-    public HttpResult<String> resetPassword(String username, String newPassword, String forgetToken) {
-        return userService.resetPassword(username, newPassword, forgetToken);
+    public HttpResult<String> forgetResetPassword(String username, String newPassword, String forgetToken) {
+        return userService.fofgetResetPassword(username, newPassword, forgetToken);
     }
 
+    @RequestMapping(value = "resetPassword", method = RequestMethod.GET)
+    @ResponseBody
+    public HttpResult<String> resetPassword(HttpSession session, String password, String newPassword) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorMessage("User is not login");
+        }
+        return userService.resetPassword(password, newPassword, user);
+    }
 }
