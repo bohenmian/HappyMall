@@ -18,5 +18,9 @@ public interface UserMapper {
 
     int checkUsername(String username);
 
+    int checkEmail(String Email);
+
     User checkPassword(String username);
+
+
 }
