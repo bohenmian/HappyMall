@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
         if (resultCount == 0) {
             return HttpResult.createByErrorMessage("Username is not exited");
         }
-        User user = userMapper.checkPassword(signInUser.getUsername());
+        User user = userMapper.checkPasswordByUsername(signInUser.getUsername(), signInUser.getPassword());
         boolean isMatch = passwordService.match(signInUser.getPassword(), user.getPassword());
         if (!isMatch) {
             return HttpResult.createByErrorMessage("Password error");
@@ -138,6 +138,24 @@ public class UserServiceImpl implements UserService {
             return HttpResult.createBySuccessMessage("update password success");
         }
         return HttpResult.createByErrorMessage("update password fail");
+    }
+
+    public HttpResult<User> updateUser(User user) {
+        int resultCount = userMapper.checkEmailByUserId(user.getEmail(), user.getId());
+        if (resultCount > 0) {
+            return HttpResult.createByErrorMessage("Email is exited");
+        }
+        User updateUser = new User();
+        updateUser.setId(user.getId());
+        updateUser.setEmail(user.getEmail());
+        updateUser.setPhone(user.getPhone());
+        updateUser.setQuestion(user.getQuestion());
+        updateUser.setAnswer(user.getAnswer());
+        int updateCount = userMapper.updateByPrimaryKeySelective(updateUser);
+        if (updateCount > 0) {
+            return HttpResult.createBySuccess("Update user success", updateUser);
+        }
+        return HttpResult.createByErrorMessage("Update user fail");
     }
 
 

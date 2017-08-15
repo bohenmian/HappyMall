@@ -19,4 +19,6 @@ public interface UserService {
     HttpResult<String> fofgetResetPassword(String username, String newPassword, String forgetToken);
 
     HttpResult<String> resetPassword(String password, String newPassword, User user);
+
+    HttpResult<User> updateUser(User user);
 }

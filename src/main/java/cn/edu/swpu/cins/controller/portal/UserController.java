@@ -85,4 +85,20 @@ public class UserController {
         }
         return userService.resetPassword(password, newPassword, user);
     }
+
+    @RequestMapping(value = "updateUser", method = RequestMethod.GET)
+    @ResponseBody
+    public HttpResult<User> updateUser(HttpSession session, User user) {
+        User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
+        if (currentUser == null) {
+            return HttpResult.createByErrorMessage("User is not login");
+        }
+        user.setId(currentUser.getId());
+        user.setUsername(currentUser.getUsername());
+        HttpResult<User> result = userService.updateUser(currentUser);
+        if (result.isSuccess()) {
+            session.setAttribute(Const.CURRENT_USER, result.getData());
+        }
+        return result;
+    }
 }
