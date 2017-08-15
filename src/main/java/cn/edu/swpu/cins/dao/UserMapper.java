@@ -2,7 +2,9 @@ package cn.edu.swpu.cins.dao;
 
 import cn.edu.swpu.cins.entity.User;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface UserMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -21,6 +23,8 @@ public interface UserMapper {
     int checkEmail(String Email);
 
     User checkPassword(String username);
+
+    String selectQuestionByUsername(String username);
 
 
 }

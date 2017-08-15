@@ -11,7 +11,7 @@ public class User {
 
     private String email;
 
-    private Long phone;
+    private String phone;
 
     private String question;
 
@@ -23,7 +23,9 @@ public class User {
 
     private Date updateTime;
 
-    public User(Integer id, String username, String password, String email, Long phone, String question, String answer, Integer role, Date createTime, Date updateTime) {
+    public User(Integer id, String username, String password, String email,
+                String phone, String question, String answer,
+                Integer role, Date createTime, Date updateTime) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -34,6 +36,19 @@ public class User {
         this.role = role;
         this.createTime = createTime;
         this.updateTime = updateTime;
+    }
+
+    public User(Integer id, String username, String password,
+                String email, String phone,
+                String question, String answer, Integer role) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.phone = phone;
+        this.question = question;
+        this.answer = answer;
+        this.role = role;
     }
 
     public User() {
@@ -72,11 +87,11 @@ public class User {
         this.email = email == null ? null : email.trim();
     }
 
-    public Long getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(Long phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 

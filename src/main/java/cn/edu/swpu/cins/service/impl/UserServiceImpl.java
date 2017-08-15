@@ -41,11 +41,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public HttpResult<String> signUp(User user) {
-        HttpResult result = this.checkNewUser(user.getUsername(), Const.USERNAME);
+        HttpResult result = this.checkValid(user.getUsername(), Const.USERNAME);
         if (!result.isSuccess()) {
             return result;
         }
-        result = this.checkNewUser(user.getEmail(), Const.EMAIL);
+        result = this.checkValid(user.getEmail(), Const.EMAIL);
         if (!result.isSuccess()) {
             return result;
         }
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
         return HttpResult.createBySuccessMessage("signUp success");
     }
 
-    public HttpResult<String> checkNewUser(String str, String type) {
+    public HttpResult<String> checkValid(String str, String type) {
         if (!StringUtils.isNotBlank(type)) {
             if (Const.USERNAME.equals(type)) {
                 int resultCount = userMapper.checkUsername(str);
@@ -77,4 +77,18 @@ public class UserServiceImpl implements UserService {
         }
         return HttpResult.createBySuccessMessage("valid success");
     }
+
+    public HttpResult getQuestion(String username) {
+        HttpResult result = this.checkValid(username, Const.USERNAME);
+        if (result.isSuccess()) {
+            return HttpResult.createByErrorMessage("user is not exited");
+        }
+        String question = userMapper.selectQuestionByUsername(username);
+        if (StringUtils.isNotBlank(question)) {
+            return HttpResult.createBySuccess(question);
+        }
+        return HttpResult.createByErrorMessage("question is null");
+    }
+
+
 }

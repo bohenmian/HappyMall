@@ -9,4 +9,8 @@ public interface UserService {
     HttpResult<User> login(SignInUser signInUser);
 
     HttpResult<String> signUp(User user);
+
+    HttpResult<String> checkValid(String str, String type);
+
+    HttpResult<String> getQuestion(String username);
 }

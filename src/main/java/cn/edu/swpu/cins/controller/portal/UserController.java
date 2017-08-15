@@ -48,7 +48,7 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "getInfo", method = RequestMethod.POST)
+    @RequestMapping(value = "getInfo", method = RequestMethod.GET)
     @ResponseBody
     public HttpResult<User> getUserInfo(HttpSession session) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
@@ -57,6 +57,14 @@ public class UserController {
         }
         return HttpResult.createByErrorMessage("user not login");
     }
+
+    @RequestMapping(value = "getQuestion")
+    @ResponseBody
+    public HttpResult<String> getQuestion(String username) {
+        return userService.getQuestion(username);
+    }
+
+
 
 
 }
