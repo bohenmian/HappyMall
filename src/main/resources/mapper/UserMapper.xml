@@ -7,7 +7,7 @@
       <arg column="username" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="password" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="email" jdbcType="VARCHAR" javaType="java.lang.String" />
-      <arg column="phone" jdbcType="BIGINT" javaType="java.lang.Long" />
+      <arg column="phone" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="question" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="answer" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="role" jdbcType="INTEGER" javaType="java.lang.Integer" />
@@ -34,7 +34,7 @@
       answer, role, create_time, 
       update_time)
     values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{email,jdbcType=VARCHAR}, #{phone,jdbcType=BIGINT}, #{question,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{question,jdbcType=VARCHAR},
       #{answer,jdbcType=VARCHAR}, #{role,jdbcType=INTEGER}, now(),
       now())
   </insert>
@@ -86,7 +86,7 @@
         #{email,jdbcType=VARCHAR},
       </if>
       <if test="phone != null" >
-        #{phone,jdbcType=BIGINT},
+        #{phone,jdbcType=VARCHAR},
       </if>
       <if test="question != null" >
         #{question,jdbcType=VARCHAR},
@@ -118,7 +118,7 @@
         email = #{email,jdbcType=VARCHAR},
       </if>
       <if test="phone != null" >
-        phone = #{phone,jdbcType=BIGINT},
+        phone = #{phone,jdbcType=VARCHAR},
       </if>
       <if test="question != null" >
         question = #{question,jdbcType=VARCHAR},
@@ -143,7 +143,7 @@
     set username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
-      phone = #{phone,jdbcType=BIGINT},
+      phone = #{phone,jdbcType=VARCHAR},
       question = #{question,jdbcType=VARCHAR},
       answer = #{answer,jdbcType=VARCHAR},
       role = #{role,jdbcType=INTEGER},
@@ -164,6 +164,11 @@
 
   <select id="checkPassword" resultType="BaseResultMap" parameterType="string">
     SELECT <include refid="Base_Column_List" /> FROM mmall_user
+    WHERE username = #{username}
+  </select>
+
+  <select id="selectQuestionByUsername" resultType="string" parameterType="string">
+    SELECT question FROM mmall_user
     WHERE username = #{username}
   </select>
 
