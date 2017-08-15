@@ -1,6 +1,7 @@
 package cn.edu.swpu.cins.dao;
 
 import cn.edu.swpu.cins.entity.User;
+import org.apache.ibatis.annotations.Param;
 
 public interface UserMapper {
     int deleteByPrimaryKey(Integer id);
@@ -14,4 +15,8 @@ public interface UserMapper {
     int updateByPrimaryKeySelective(User record);
 
     int updateByPrimaryKey(User record);
+
+    int checkUsername(String username);
+
+    User checkPassword(String username);
 }
