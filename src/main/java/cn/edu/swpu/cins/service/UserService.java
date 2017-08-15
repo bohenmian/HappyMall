@@ -21,4 +21,6 @@ public interface UserService {
     HttpResult<String> resetPassword(String password, String newPassword, User user);
 
     HttpResult<User> updateUser(User user);
+
+    HttpResult<User> getUserDetail(Integer userId);
 }

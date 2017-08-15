@@ -158,5 +158,13 @@ public class UserServiceImpl implements UserService {
         return HttpResult.createByErrorMessage("Update user fail");
     }
 
+    public HttpResult<User> getUserDetail(Integer userId) {
+        User user = userMapper.selectByPrimaryKey(userId);
+        if (user == null) {
+            return HttpResult.createByErrorMessage("User not exit");
+        }
+        return HttpResult.createBySuccess(user);
+    }
+
 
 }

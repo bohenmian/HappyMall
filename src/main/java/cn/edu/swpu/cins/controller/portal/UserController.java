@@ -4,14 +4,16 @@ import cn.edu.swpu.cins.dto.request.SignInUser;
 import cn.edu.swpu.cins.dto.response.Const;
 import cn.edu.swpu.cins.dto.response.HttpResult;
 import cn.edu.swpu.cins.entity.User;
+import cn.edu.swpu.cins.enums.HttpResultEnum;
 import cn.edu.swpu.cins.service.UserService;
+import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpSession;
+
 
 @Controller
 @RequestMapping("/user/")
@@ -48,7 +50,7 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "getInfo", method = RequestMethod.GET)
+    @RequestMapping(value = "getUserInfo", method = RequestMethod.GET)
     @ResponseBody
     public HttpResult<User> getUserInfo(HttpSession session) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
@@ -64,19 +66,19 @@ public class UserController {
         return userService.getQuestion(username);
     }
 
-    @RequestMapping(value = "checkAnswer", method = RequestMethod.GET)
+    @RequestMapping(value = "checkAnswer", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult<String> checkAnswer(String username, String question, String answer) {
         return userService.checkAnswer(username, question, answer);
     }
 
-    @RequestMapping(value = "forgetResetPassword", method = RequestMethod.GET)
+    @RequestMapping(value = "forgetResetPassword", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult<String> forgetResetPassword(String username, String newPassword, String forgetToken) {
         return userService.fofgetResetPassword(username, newPassword, forgetToken);
     }
 
-    @RequestMapping(value = "resetPassword", method = RequestMethod.GET)
+    @RequestMapping(value = "resetPassword", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult<String> resetPassword(HttpSession session, String password, String newPassword) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
@@ -86,7 +88,7 @@ public class UserController {
         return userService.resetPassword(password, newPassword, user);
     }
 
-    @RequestMapping(value = "updateUser", method = RequestMethod.GET)
+    @RequestMapping(value = "updateUser", method = RequestMethod.PUT)
     @ResponseBody
     public HttpResult<User> updateUser(HttpSession session, User user) {
         User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
@@ -101,4 +103,15 @@ public class UserController {
         }
         return result;
     }
+
+    @RequestMapping(value = "getUserDetail", method = RequestMethod.GET)
+    @ResponseBody
+    public HttpResult<User> getUserDetail(HttpSession session) {
+        User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
+        if (currentUser == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), "need login");
+        }
+        return userService.getUserDetail(currentUser.getId());
+    }
+
 }
