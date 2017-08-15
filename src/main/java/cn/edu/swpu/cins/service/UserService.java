@@ -7,4 +7,6 @@ import cn.edu.swpu.cins.entity.User;
 public interface UserService {
 
     HttpResult<User> login(SignInUser signInUser);
+
+    HttpResult<String> signUp(User user);
 }

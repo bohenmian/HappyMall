@@ -33,4 +33,30 @@ public class UserController {
         }
         return result;
     }
+
+    @RequestMapping(value = "logout", method = RequestMethod.POST)
+    @ResponseBody
+    public HttpResult<String> logout(HttpSession session) {
+        session.removeAttribute(Const.CURRENT_USER);
+        return HttpResult.createBySuccess();
+    }
+
+    @RequestMapping(value = "signUp", method = RequestMethod.POST)
+    @ResponseBody
+    public HttpResult<String> signUp(User user) {
+        return userService.signUp(user);
+    }
+
+
+    @RequestMapping(value = "getInfo", method = RequestMethod.POST)
+    @ResponseBody
+    public HttpResult<User> getUserInfo(HttpSession session) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user != null) {
+            return HttpResult.createBySuccess(user);
+        }
+        return HttpResult.createByErrorMessage("user not login");
+    }
+
+
 }
