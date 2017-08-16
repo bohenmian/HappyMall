@@ -55,4 +55,18 @@ public class CategoryManageController {
             return HttpResult.createByErrorMessage("Need admin authority");
         }
     }
+
+    public HttpResult getChildrenParallelCategory(HttpSession session, @RequestParam(value = "categoryId",defaultValue = "0") Integer categoryId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), "User need login");
+        }
+        if (userService.checkAdminRole(user).isSuccess()) {
+            return categoryService.getChildrenParallelCategory(categoryId);
+        } else {
+            return HttpResult.createByErrorMessage("Need admin authority");
+        }
+
+    }
+
 }
