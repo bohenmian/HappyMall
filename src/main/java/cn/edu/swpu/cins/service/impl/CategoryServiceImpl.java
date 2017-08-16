@@ -31,6 +31,19 @@ public class CategoryServiceImpl implements CategoryService {
             return HttpResult.createBySuccess("Add category success");
         }
         return HttpResult.createByErrorMessage("Add category fail");
+    }
 
+    public HttpResult updateCategoryName(String categoryName, Integer parentId) {
+        if (parentId == null || StringUtils.isBlank(categoryName)) {
+            return HttpResult.createByErrorMessage("Wrong paramter");
+        }
+        Category category = new Category();
+        category.setId(parentId);
+        category.setName(categoryName);
+        int rowCount = categoryMapper.updateByPrimaryKeySelective(category);
+        if (rowCount > 0) {
+            return HttpResult.createBySuccess("Update category name success");
+        }
+        return HttpResult.createByErrorMessage("Update category name fail");
     }
 }

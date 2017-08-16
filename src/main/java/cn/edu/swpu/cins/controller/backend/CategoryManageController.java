@@ -38,7 +38,21 @@ public class CategoryManageController {
         if (userService.checkAdminRole(user).isSuccess()) {
             return categoryService.addCategory(categoryName, parentId);
         } else {
-            return HttpResult.createByErrorMessage("Add category need authority");
+            return HttpResult.createByErrorMessage("Need admin authority");
+        }
+    }
+
+    @RequestMapping(value = "updateCategory", method = RequestMethod.POST)
+    @ResponseBody
+    public HttpResult setCategoryName(HttpSession session, Integer categoryId, String categoryName) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), "User need login");
+        }
+        if (userService.checkAdminRole(user).isSuccess()) {
+            return categoryService.updateCategoryName(categoryName, categoryId);
+        } else {
+            return HttpResult.createByErrorMessage("Need admin authority");
         }
     }
 }
