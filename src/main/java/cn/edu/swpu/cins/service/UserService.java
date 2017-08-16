@@ -23,4 +23,6 @@ public interface UserService {
     HttpResult<User> updateUser(User user);
 
     HttpResult<User> getUserDetail(Integer userId);
+
+    HttpResult checkAdminRole(User user);
 }

@@ -167,4 +167,11 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    public HttpResult checkAdminRole(User user) {
+        if (user != null && user.getRole().intValue() == Const.Role.ROLE_CUSTOMER) {
+            return HttpResult.createBySuccess();
+        }
+        return HttpResult.createByError();
+    }
+
 }
