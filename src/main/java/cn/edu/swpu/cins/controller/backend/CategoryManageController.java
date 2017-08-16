@@ -56,6 +56,8 @@ public class CategoryManageController {
         }
     }
 
+    @RequestMapping(value = "getChildrenCategory", method = RequestMethod.GET)
+    @ResponseBody
     public HttpResult getChildrenParallelCategory(HttpSession session, @RequestParam(value = "categoryId",defaultValue = "0") Integer categoryId) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
@@ -66,7 +68,20 @@ public class CategoryManageController {
         } else {
             return HttpResult.createByErrorMessage("Need admin authority");
         }
+    }
 
+    @RequestMapping(value = "getCategory", method = RequestMethod.GET)
+    @ResponseBody
+    public HttpResult getCategory(HttpSession session, @RequestParam(value = "categoryId",defaultValue = "0") Integer categoryId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), "User need login");
+        }
+        if (userService.checkAdminRole(user).isSuccess()) {
+            return categoryService.getCategory(categoryId);
+        } else {
+            return HttpResult.createByErrorMessage("Need admin authority");
+        }
     }
 
 }

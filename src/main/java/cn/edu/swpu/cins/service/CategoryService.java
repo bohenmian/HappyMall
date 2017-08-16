@@ -12,4 +12,6 @@ public interface CategoryService {
     HttpResult updateCategoryName(String categoryName, Integer parentId);
 
     HttpResult<List<Category>> getChildrenParallelCategory(Integer categoryId);
+
+    HttpResult getCategory(Integer categoryId);
 }
