@@ -5,14 +5,20 @@ import cn.edu.swpu.cins.config.PropertiesConfig;
 import cn.edu.swpu.cins.dao.CategoryMapper;
 import cn.edu.swpu.cins.dao.ProductMapper;
 import cn.edu.swpu.cins.dto.request.ProductDetail;
+import cn.edu.swpu.cins.dto.request.ProductVo;
 import cn.edu.swpu.cins.dto.response.HttpResult;
 import cn.edu.swpu.cins.entity.Category;
 import cn.edu.swpu.cins.entity.Product;
 import cn.edu.swpu.cins.enums.HttpResultEnum;
 import cn.edu.swpu.cins.service.ProduceService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProduceService {
@@ -100,5 +106,31 @@ public class ProductServiceImpl implements ProduceService {
         productDetail.setCreateTime(DateTimeDeserializer.dateToStr(product.getCreateTime()));
         productDetail.setUpdateTime(DateTimeDeserializer.dateToStr(product.getUpdateTime()));
         return productDetail;
+    }
+
+    public HttpResult<PageInfo> getProductList(int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Product> list = productMapper.getProductList();
+        List<ProductVo> productVoList = Lists.newArrayList();
+        for (Product productItem : list) {
+            ProductVo productVo = assembleProductList(productItem);
+            productVoList.add(productVo);
+        }
+        PageInfo pageResult = new PageInfo(list);
+        pageResult.setList(productVoList);
+        return HttpResult.createBySuccess(pageResult);
+    }
+
+    private ProductVo assembleProductList(Product product) {
+        ProductVo productVo = new ProductVo();
+        productVo.setId(product.getId());
+        productVo.setName(product.getName());
+        productVo.setCategoryId(product.getCategoryId());
+        productVo.setImageHost(PropertiesConfig.getProperties("ftp.server.http.prefix", "http://img.happymall.com/"));
+        productVo.setMainImage(product.getMainImage());
+        productVo.setPrice(product.getPrice());
+        productVo.setSubtitle(product.getSubtitle());
+        productVo.setStatus(product.getStatus());
+        return productVo;
     }
 }
