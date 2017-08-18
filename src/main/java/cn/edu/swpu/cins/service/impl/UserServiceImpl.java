@@ -1,7 +1,6 @@
 package cn.edu.swpu.cins.service.impl;
 
 import cn.edu.swpu.cins.dao.UserMapper;
-import cn.edu.swpu.cins.dto.request.SignInUser;
 import cn.edu.swpu.cins.dto.response.Const;
 import cn.edu.swpu.cins.dto.response.HttpResult;
 import cn.edu.swpu.cins.dto.response.TokenCache;
@@ -28,13 +27,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public HttpResult<User> login(SignInUser signInUser) {
-        int resultCount = userMapper.checkUsername(signInUser.getUsername());
+    public HttpResult<User> login(String username, String password) {
+        int resultCount = userMapper.checkUsername(username);
         if (resultCount == 0) {
             return HttpResult.createByErrorMessage("Username is not exited");
         }
-        User user = userMapper.checkPasswordByUsername(signInUser.getUsername(), signInUser.getPassword());
-        boolean isMatch = passwordService.match(signInUser.getPassword(), user.getPassword());
+        User user = userMapper.checkPasswordByUsername(username, password);
+        boolean isMatch = passwordService.match(username, user.getPassword());
         if (!isMatch) {
             return HttpResult.createByErrorMessage("Password error");
         } else {

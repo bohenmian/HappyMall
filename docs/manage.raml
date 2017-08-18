@@ -1,0 +1,41 @@
+#%RAML 1.0
+title: happy mall
+version: 1.0
+description: RESTful APIs of happymall
+
+/manage:
+  /category:
+    /getCategoryId:
+      description: get all categories
+      get:
+        description: get all category
+        queryParameters:
+          categoryId:
+            type: integer
+            description: category id
+            required: true
+        responses:
+          404:
+            description: fail
+            body:
+              application/json:
+                example:
+                  {
+                    "status": 10,
+                    "msg": "need admin authority"
+                  }
+          200:
+            description: success
+            body:
+              application/json:
+                example:
+                  {
+                    "data": [
+                      100009,
+                      100010,
+                      100001,
+                      100006,
+                      100007,
+                      100008
+                      ]
+                  }

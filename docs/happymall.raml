@@ -1,0 +1,387 @@
+#%RAML 1.0
+title: happy mall
+version: 1.0
+description: RESTful APIs of happymall
+/user:
+  /login:
+    description: user login happymall
+    post:
+      description: user login happymall
+      queryParameters:
+        username:
+          type: string
+          description: user name
+          required: true
+        password:
+          type: string
+          description: user password
+          required: true
+      responses:
+        404:
+          description: fail
+          body:
+            application/json:
+              example:
+                {
+                  "status": 1,
+                  "msg": password error
+                }
+        200:
+          description: success
+          body:
+            application/json:
+              example:
+                {
+                  "status": 0,
+                  "data": {
+                  "id": 12,
+                  "username": bohenmian,
+                  "email": bohenmian@163.com,
+                  "phone": 13541552447,
+                  "role": 0,
+                  "createTime": 1479048325000,
+                  "updateTime": 1479048325000
+                  }
+                }
+  /logout:
+    description: user logout happymall
+    post:
+      description: user logout happymall
+      responses:
+        404:
+          description: fail
+          body:
+            application/json:
+              example:
+                {
+                  "status": 1,
+                  "msg": server exception
+                }
+        200:
+          description: success
+          body:
+            application/json:
+              example:
+                {
+                  "status": 1,
+                  "msg": logout success
+                }
+  /signup:
+    description: signUp a new user
+    post:
+      description: signUp a new user
+      queryParameters:
+        User:
+          type: User
+          required: true
+      responses:
+        404:
+          description: fail
+          body:
+            application/json:
+              example:
+                {
+                  "status": 1,
+                  "msg": user has exited
+                }
+        200:
+          description: success
+          body:
+            application/json:
+              example:
+                {
+                  "status": 0,
+                  "msg": signUp success
+                }
+  /checkValid:
+    description: check new user
+    post:
+      description: check username or email
+      queryParameters:
+        type:
+          description: username or email
+          type: string
+          required: true
+            example:
+              username:
+                username
+              email:
+                email
+        str:
+          description: user signUp username or email
+          type: string
+          required: true
+            example:
+              username:
+                bohenmian
+              email:
+                bohenmain@163.com
+      responses:
+        404:
+          description: fail
+          body:
+            appclication/json:
+              example:
+                {
+                  "status": 1,
+                  "msg": username or email has exited
+                }
+        200:
+          description: success
+          body:
+            application/json:
+              example:
+                {
+                  "status": 0,
+                  "msg": checkvalid success
+                }
+  /getUserInfo:
+    description: get user info
+    get:
+      description: get user info
+      responses:
+        404:
+          description: fail
+          body:
+            application/json:
+              example:
+                {
+                  "status": 1
+                  "msg": user need to login
+                }
+        200:
+          description: success
+          body:
+            application:
+              example:
+                {
+                  "status": 0,
+                  "data": {
+                  "id": 12,
+                  "username": aaa,
+                  "email": aaa@163.com,
+                  "phone": null,
+                  "role": 0,
+                  "createTime": 1479048325000,
+                  "updateTime": 1479048325000
+                  }
+                }
+  /getQuestion:
+    description: get user question
+    get:
+      description: get reset question
+      queryParameters:
+        username:
+          description: username
+          type: string
+          required: true
+            example:
+              username:
+                bohenmian
+      responses:
+        404:
+          description: fail
+          body:
+            application/json:
+              example:
+                {
+                  "status": 1,
+                  "msg": user not exited
+                }
+        200:
+          description: success
+          body:
+            application/json:
+              example:
+                {
+                  "status": 0,
+                  "msg": this is reset password question
+                }
+  /checkAnswer:
+    description: check user answer
+    post:
+      description: check user reset password answer
+      queryParameters:
+        username:
+          description: user name
+          type: string
+          required: true
+        question:
+          description: user question
+          type: string
+          required: true
+        answer:
+          description: user answer
+          type: string
+          required: true
+      responses:
+        404:
+          description: fail
+          body:
+            application/json:
+              example:
+                {
+                  "status": 1,
+                  "msg": wrong answer
+                }
+        200:
+          description: success
+          body:
+            application/json:
+              example:
+                {
+                  "status": 0,
+                  "data": 531ef4b4-9663-4e6d-9a20-fb56367446a5
+                }
+  /forgetResetPassword:
+    description: forger password and reset password
+    post:
+      description: reset password
+      queryParameters:
+        username:
+          description: username
+          type: string
+          required: true
+        newPassword:
+          description: user new password
+          type: string
+          required: true
+        forgetToken:
+          description: token
+          type: string
+          required: true
+      responses:
+        404:
+          description: fail
+          body:
+            application/json:
+              example:
+                {
+                  "status": 1,
+                  "msg": reset password fail
+                }
+        200:
+          description: success
+          body:
+            application/json:
+              example:
+                {
+                  "status": 0,
+                  "msg": reset password success
+                }
+  /resetPassword:
+    description: reset password
+    post:
+      description: login user reset password
+      queryParameters:
+        password:
+          description: user old password
+          type: string
+          required: true
+        newPassword:
+          description: user new password
+          type: string
+          required: true
+      responses:
+        404:
+          description: fail
+          body:
+            application/json:
+              example:
+                {
+                  "status": 1,
+                  "msg": user not login
+                }
+        200:
+          description: success
+          body:
+            application/json:
+              example:
+                {
+                  "status": 0,
+                  "msg": reset password success
+                }
+  /updateUser:
+    description:
+    put:
+      description: update user info
+      queryParameters:
+        User:
+          type: User
+          required: true
+      responses:
+        404:
+          description: fail
+          body:
+            application/json:
+              example:
+                {
+                  "status": 1,
+                  "msg": update info fail
+                }
+        200:
+          description: success
+          body:
+            application/json:
+              example:
+                {
+                  "status": 0,
+                  "msg": update info success
+                }
+  /getUserDetail:
+    description:
+    get:
+      description: get user detail info
+      responses:
+        404:
+          description: fail
+          body:
+            application/json:
+              example:
+                {
+                  "status": 1,
+                  "msg": user need login
+                }
+        200:
+          description: success
+          body:
+            application/json:
+              example:
+                {
+                  "status": 0,
+                  "msg": get user detail success
+                }
+
+
+types:
+  User:
+    type: object
+    properties:
+      username:
+        description: user name
+        type: string
+      password:
+        description: user password
+        type: string
+      email:
+        description: user email
+        type: string
+      phone:
+        description: user phone
+        type: string
+      question:
+        description: user reset password question
+        type: string
+      answer:
+        description: user reset password answer
+        type: string
+
+
+
+
+
+
+          
+
+
+

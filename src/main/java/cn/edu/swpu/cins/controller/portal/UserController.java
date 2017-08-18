@@ -1,6 +1,5 @@
 package cn.edu.swpu.cins.controller.portal;
 
-import cn.edu.swpu.cins.dto.request.SignInUser;
 import cn.edu.swpu.cins.dto.response.Const;
 import cn.edu.swpu.cins.dto.response.HttpResult;
 import cn.edu.swpu.cins.entity.User;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @Controller
-@RequestMapping("/user/")
+@RequestMapping("/user")
 public class UserController {
 
     private UserService userService;
@@ -26,37 +25,37 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RequestMapping(value = "login", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public HttpResult<User> login(SignInUser signInUser, HttpSession session) {
-        HttpResult<User> result = userService.login(signInUser);
+    public HttpResult<User> login(String username, String password, HttpSession session) {
+        HttpResult<User> result = userService.login(username, password);
         if (result.isSuccess()) {
             session.setAttribute(Const.CURRENT_USER, result.getData());
         }
         return result;
     }
 
-    @RequestMapping(value = "logout", method = RequestMethod.POST)
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult<String> logout(HttpSession session) {
         session.removeAttribute(Const.CURRENT_USER);
         return HttpResult.createBySuccess();
     }
 
-    @RequestMapping(value = "signUp", method = RequestMethod.POST)
+    @RequestMapping(value = "/signUp", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult<String> signUp(User user) {
         return userService.signUp(user);
     }
 
-    @RequestMapping(value = "checkValid",method = RequestMethod.POST)
+    @RequestMapping(value = "/checkValid",method = RequestMethod.POST)
     @ResponseBody
     public HttpResult<String> checkValid(String str,String type){
         return userService.checkValid(str,type);
     }
 
 
-    @RequestMapping(value = "getUserInfo", method = RequestMethod.GET)
+    @RequestMapping(value = "/getUserInfo", method = RequestMethod.GET)
     @ResponseBody
     public HttpResult<User> getUserInfo(HttpSession session) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
@@ -66,25 +65,25 @@ public class UserController {
         return HttpResult.createByErrorMessage("User not login");
     }
 
-    @RequestMapping(value = "getQuestion", method = RequestMethod.GET)
+    @RequestMapping(value = "/getQuestion", method = RequestMethod.GET)
     @ResponseBody
     public HttpResult<String> getQuestion(String username) {
         return userService.getQuestion(username);
     }
 
-    @RequestMapping(value = "checkAnswer", method = RequestMethod.POST)
+    @RequestMapping(value = "/checkAnswer", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult<String> checkAnswer(String username, String question, String answer) {
         return userService.checkAnswer(username, question, answer);
     }
 
-    @RequestMapping(value = "forgetResetPassword", method = RequestMethod.POST)
+    @RequestMapping(value = "/forgetResetPassword", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult<String> forgetResetPassword(String username, String newPassword, String forgetToken) {
         return userService.fofgetResetPassword(username, newPassword, forgetToken);
     }
 
-    @RequestMapping(value = "resetPassword", method = RequestMethod.POST)
+    @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult<String> resetPassword(HttpSession session, String password, String newPassword) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
@@ -94,7 +93,7 @@ public class UserController {
         return userService.resetPassword(password, newPassword, user);
     }
 
-    @RequestMapping(value = "updateUser", method = RequestMethod.PUT)
+    @RequestMapping(value = "/updateUser", method = RequestMethod.PUT)
     @ResponseBody
     public HttpResult<User> updateUser(HttpSession session, User user) {
         User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
@@ -110,7 +109,7 @@ public class UserController {
         return result;
     }
 
-    @RequestMapping(value = "getUserDetail", method = RequestMethod.GET)
+    @RequestMapping(value = "/getUserDetail", method = RequestMethod.GET)
     @ResponseBody
     public HttpResult<User> getUserDetail(HttpSession session) {
         User currentUser = (User) session.getAttribute(Const.CURRENT_USER);

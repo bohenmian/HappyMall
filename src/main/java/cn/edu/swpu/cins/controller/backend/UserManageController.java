@@ -1,7 +1,6 @@
 package cn.edu.swpu.cins.controller.backend;
 
 
-import cn.edu.swpu.cins.dto.request.SignInUser;
 import cn.edu.swpu.cins.dto.response.Const;
 import cn.edu.swpu.cins.dto.response.HttpResult;
 import cn.edu.swpu.cins.entity.User;
@@ -26,8 +25,8 @@ public class UserManageController {
 
     @RequestMapping(value = "login", method = RequestMethod.POST)
     @ResponseBody
-    public HttpResult<User> login(SignInUser signInUser, HttpSession session) {
-        HttpResult<User> result = userService.login(signInUser);
+    public HttpResult<User> login(String username, String password, HttpSession session) {
+        HttpResult<User> result = userService.login(username, password);
         if (result.isSuccess()) {
             User user = result.getData();
             if (user.getRole() == Const.Role.ROLE_ADMIN) {
