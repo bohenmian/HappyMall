@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/manage/category/")
+@RequestMapping("/manage/category")
 public class CategoryManageController {
 
     private UserService userService;
@@ -28,7 +28,7 @@ public class CategoryManageController {
         this.categoryService = categoryService;
     }
 
-    @RequestMapping(value = "addCategory", method = RequestMethod.POST)
+    @RequestMapping(value = "/addCategory", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult addCategory(HttpSession session, String categoryName, @RequestParam(value = "parentId", defaultValue = "0") int parentId) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
@@ -42,7 +42,7 @@ public class CategoryManageController {
         }
     }
 
-    @RequestMapping(value = "updateCategory", method = RequestMethod.POST)
+    @RequestMapping(value = "/updateCategory", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult setCategoryName(HttpSession session, Integer categoryId, String categoryName) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
@@ -56,7 +56,7 @@ public class CategoryManageController {
         }
     }
 
-    @RequestMapping(value = "getChildrenCategory", method = RequestMethod.GET)
+    @RequestMapping(value = "/getChildrenCategoryId", method = RequestMethod.GET)
     @ResponseBody
     public HttpResult getChildrenParallelCategory(HttpSession session, @RequestParam(value = "categoryId",defaultValue = "0") Integer categoryId) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
@@ -70,7 +70,7 @@ public class CategoryManageController {
         }
     }
 
-    @RequestMapping(value = "getCategory", method = RequestMethod.GET)
+    @RequestMapping(value = "/getCategoryId", method = RequestMethod.GET)
     @ResponseBody
     public HttpResult getCategory(HttpSession session, @RequestParam(value = "categoryId",defaultValue = "0") Integer categoryId) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
