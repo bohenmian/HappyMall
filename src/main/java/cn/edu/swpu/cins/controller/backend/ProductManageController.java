@@ -55,4 +55,18 @@ public class ProductManageController {
             return HttpResult.createByErrorMessage("set product status need admin authority");
         }
     }
+
+    @RequestMapping(value = "/getDetail", method = RequestMethod.GET)
+    @ResponseBody
+    public HttpResult getDetail(HttpSession session, Integer productId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), "user need login");
+        }
+        if (userService.checkAdminRole(user).isSuccess()) {
+            return produceService.getProductDetail(productId);
+        } else {
+            return HttpResult.createByErrorMessage("set product status need admin authority");
+        }
+    }
 }

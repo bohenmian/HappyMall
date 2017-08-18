@@ -1,7 +1,12 @@
 package cn.edu.swpu.cins.service.impl;
 
+import cn.edu.swpu.cins.config.DateTimeDeserializer;
+import cn.edu.swpu.cins.config.PropertiesConfig;
+import cn.edu.swpu.cins.dao.CategoryMapper;
 import cn.edu.swpu.cins.dao.ProductMapper;
+import cn.edu.swpu.cins.dto.request.ProductDetail;
 import cn.edu.swpu.cins.dto.response.HttpResult;
+import cn.edu.swpu.cins.entity.Category;
 import cn.edu.swpu.cins.entity.Product;
 import cn.edu.swpu.cins.enums.HttpResultEnum;
 import cn.edu.swpu.cins.service.ProduceService;
@@ -13,10 +18,12 @@ import org.springframework.stereotype.Service;
 public class ProductServiceImpl implements ProduceService {
 
     private ProductMapper productMapper;
+    private CategoryMapper categoryMapper;
 
     @Autowired
-    public ProductServiceImpl(ProductMapper productMapper) {
+    public ProductServiceImpl(ProductMapper productMapper, CategoryMapper categoryMapper) {
         this.productMapper = productMapper;
+        this.categoryMapper = categoryMapper;
     }
 
     public HttpResult saveOrUpdateProduct(Product product) {
@@ -56,5 +63,42 @@ public class ProductServiceImpl implements ProduceService {
             return HttpResult.createBySuccess("update product status success");
         }
         return HttpResult.createByErrorMessage("update product status fail");
+    }
+
+    public HttpResult<Object> getProductDetail(Integer productId) {
+        if (productId == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.ILLEGAL_ARGUMENT.getCode(), HttpResultEnum.ILLEGAL_ARGUMENT.getDescrption());
+        }
+        Product product = productMapper.selectByPrimaryKey(productId);
+        if (product == null) {
+            return HttpResult.createByErrorMessage("product not exit");
+        }
+        ProductDetail productDetail = assembleProductDetail(product);
+        return HttpResult.createBySuccess(productDetail);
+
+    }
+
+    private ProductDetail assembleProductDetail(Product product) {
+        ProductDetail productDetail = new ProductDetail();
+        productDetail.setId(product.getId());
+        productDetail.setSubtitle(product.getSubtitle());
+        productDetail.setPrice(product.getPrice());
+        productDetail.setMainImage(product.getMainImage());
+        productDetail.setSubImages(product.getSubImages());
+        productDetail.setCategoryId(product.getCategoryId());
+        productDetail.setDetail(product.getDetail());
+        productDetail.setName(product.getName());
+        productDetail.setStatus(product.getStatus());
+        productDetail.setStock(product.getStock());
+        productDetail.setImageHost(PropertiesConfig.getProperties("ftp.server.http.prefix", "http://img.happymall.com/"));
+        Category category = categoryMapper.selectByPrimaryKey(product.getId());
+        if (category == null) {
+            productDetail.setParentCategoryId(0);
+        } else {
+            productDetail.setParentCategoryId(category.getParentId());
+        }
+        productDetail.setCreateTime(DateTimeDeserializer.dateToStr(product.getCreateTime()));
+        productDetail.setUpdateTime(DateTimeDeserializer.dateToStr(product.getUpdateTime()));
+        return productDetail;
     }
 }

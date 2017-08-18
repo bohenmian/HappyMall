@@ -8,4 +8,6 @@ public interface ProduceService {
     HttpResult saveOrUpdateProduct(Product product);
 
     HttpResult<String> setSaleStatus(Integer productId, Integer status);
+
+    HttpResult<Object> getProductDetail(Integer productId);
 }
