@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
-@Configuration
 public class PropertiesConfig {
 
     private static Logger logger = LoggerFactory.getLogger(PropertiesConfig.class);

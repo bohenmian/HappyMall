@@ -8,6 +8,7 @@ import cn.edu.swpu.cins.service.UserService;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -44,7 +45,7 @@ public class UserController {
 
     @RequestMapping(value = "/signUp", method = RequestMethod.POST)
     @ResponseBody
-    public HttpResult<String> signUp(User user) {
+    public HttpResult<String> signUp(@RequestBody User user) {
         return userService.signUp(user);
     }
 
@@ -95,7 +96,7 @@ public class UserController {
 
     @RequestMapping(value = "/updateUser", method = RequestMethod.PUT)
     @ResponseBody
-    public HttpResult<User> updateUser(HttpSession session, User user) {
+    public HttpResult<User> updateUser(@RequestBody User user, HttpSession session) {
         User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
         if (currentUser == null) {
             return HttpResult.createByErrorMessage("User is not login");

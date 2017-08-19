@@ -1,11 +1,11 @@
 package cn.edu.swpu.cins.service.impl;
 
+import cn.edu.swpu.cins.config.MD5Config;
 import cn.edu.swpu.cins.dao.UserMapper;
 import cn.edu.swpu.cins.dto.response.Const;
 import cn.edu.swpu.cins.dto.response.HttpResult;
 import cn.edu.swpu.cins.dto.response.TokenCache;
 import cn.edu.swpu.cins.entity.User;
-import cn.edu.swpu.cins.service.PasswordService;
 import cn.edu.swpu.cins.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +18,10 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private UserMapper userMapper;
-    private PasswordService passwordService;
 
     @Autowired
-    public UserServiceImpl(UserMapper userMapper, PasswordService passwordService) {
+    public UserServiceImpl(UserMapper userMapper) {
         this.userMapper = userMapper;
-        this.passwordService = passwordService;
     }
 
     @Override
@@ -32,13 +30,13 @@ public class UserServiceImpl implements UserService {
         if (resultCount == 0) {
             return HttpResult.createByErrorMessage("Username is not exited");
         }
-        User user = userMapper.checkPasswordByUsername(username, password);
-        boolean isMatch = passwordService.match(username, user.getPassword());
-        if (!isMatch) {
-            return HttpResult.createByErrorMessage("Password error");
-        } else {
-            return HttpResult.createBySuccess("Login success", user);
+        String md5Password = MD5Config.MD5EncodeUtf8(password);
+        User user = userMapper.checkPasswordByUsername(username, md5Password);
+        if (user == null) {
+            return HttpResult.createByErrorMessage("wrong password");
         }
+        user.setPassword(StringUtils.EMPTY);
+        return HttpResult.createBySuccess("login success", user);
     }
 
     @Override
@@ -52,7 +50,7 @@ public class UserServiceImpl implements UserService {
             return result;
         }
         user.setRole(Const.Role.ROLE_CUSTOMER);
-        user.setPassword(passwordService.encode(user.getPassword()));
+        user.setPassword(MD5Config.MD5EncodeUtf8(user.getPassword()));
         int resultCount = userMapper.insert(user);
         if (resultCount == 0) {
             return HttpResult.createByErrorMessage("SignUp fail");
@@ -115,7 +113,7 @@ public class UserServiceImpl implements UserService {
             return HttpResult.createByErrorMessage("Token had expired");
         }
         if (StringUtils.equals(forgetToken, token)) {
-            String password = passwordService.encode(newPassword);
+            String password = MD5Config.MD5EncodeUtf8(newPassword);
             int rowCount = userMapper.updatePasswordByUsername(username, password);
             if (rowCount > 0) {
                 return HttpResult.createBySuccess("Reset password success");
@@ -127,11 +125,11 @@ public class UserServiceImpl implements UserService {
     }
 
     public HttpResult<String> resetPassword(String password, String newPassword, User user) {
-        int resultCount = userMapper.checkPassword(passwordService.encode(password), user.getId());
+        int resultCount = userMapper.checkPassword(MD5Config.MD5EncodeUtf8(password), user.getId());
         if (resultCount == 0) {
             return HttpResult.createByErrorMessage("old password wrong");
         }
-        user.setPassword(passwordService.encode(newPassword));
+        user.setPassword(MD5Config.MD5EncodeUtf8(newPassword));
         int updateCount = userMapper.updateByPrimaryKeySelective(user);
         if (updateCount > 0) {
             return HttpResult.createBySuccessMessage("update password success");
