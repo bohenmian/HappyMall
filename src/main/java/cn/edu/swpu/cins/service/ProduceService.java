@@ -13,4 +13,6 @@ public interface ProduceService {
     HttpResult<Object> getProductDetail(Integer productId);
 
     public HttpResult<PageInfo> getProductList(int pageNum, int pageSize);
+
+    public HttpResult<PageInfo> searchProduct(String productName, Integer prodcutId, int pageNum, int pageSize);
 }

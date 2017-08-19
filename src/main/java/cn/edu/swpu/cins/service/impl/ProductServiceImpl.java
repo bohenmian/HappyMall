@@ -133,4 +133,21 @@ public class ProductServiceImpl implements ProduceService {
         productVo.setStatus(product.getStatus());
         return productVo;
     }
+
+    public HttpResult<PageInfo> searchProduct(String productName, Integer prodcutId, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        if (StringUtils.isNotBlank(productName)) {
+            productName = new StringBuilder().append("%").append("%").toString();
+        }
+
+        List<Product> list = productMapper.selectNameAndId(productName, prodcutId);
+        List<ProductVo> productVoList = Lists.newArrayList();
+        for (Product productItem : list) {
+            ProductVo productVo = assembleProductList(productItem);
+            productVoList.add(productVo);
+        }
+        PageInfo pageResult = new PageInfo(list);
+        pageResult.setList(productVoList);
+        return HttpResult.createBySuccess(pageResult);
+    }
 }

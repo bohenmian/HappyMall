@@ -87,4 +87,18 @@ public class ProductManageController {
         }
     }
 
+    public HttpResult searchProduct(HttpSession session, String productName, Integer productId,
+                                     @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                     @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
+        }
+        if (userService.checkAdminRole(user).isSuccess()) {
+            return produceService.searchProduct(productName, productId, pageNum, pageSize);
+        } else {
+            return HttpResult.createByErrorMessage("set product status need admin authority");
+        }
+    }
+
 }
