@@ -13,9 +13,9 @@ public interface ProductService {
 
     HttpResult<ProductDetail> manageProductDetail(Integer productId);
 
-    public HttpResult<PageInfo> getProductList(int pageNum, int pageSize);
+    HttpResult<PageInfo> getProductList(int pageNum, int pageSize);
 
-    public HttpResult<PageInfo> searchProduct(String productName, Integer prodcutId, int pageNum, int pageSize);
+    HttpResult<PageInfo> searchProduct(String productName, Integer prodcutId, int pageNum, int pageSize);
 
-    public HttpResult<ProductDetail> getProductDetail(Integer productId);
+    HttpResult<ProductDetail> getProductDetail(Integer productId);
 }

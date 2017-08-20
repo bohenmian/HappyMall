@@ -6,10 +6,15 @@ import cn.edu.swpu.cins.dto.response.Const;
 import cn.edu.swpu.cins.dto.response.HttpResult;
 import cn.edu.swpu.cins.dto.response.TokenCache;
 import cn.edu.swpu.cins.entity.User;
+import cn.edu.swpu.cins.exception.EmailNoExitedException;
+import cn.edu.swpu.cins.exception.HappyMallException;
+import cn.edu.swpu.cins.exception.UserNoExitedException;
 import cn.edu.swpu.cins.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -24,11 +29,10 @@ public class UserServiceImpl implements UserService {
         this.userMapper = userMapper;
     }
 
-    @Override
     public HttpResult<User> login(String username, String password) {
         int resultCount = userMapper.checkUsername(username);
         if (resultCount == 0) {
-            return HttpResult.createByErrorMessage("Username is not exited");
+            throw new UserNoExitedException("user not exited");
         }
         String md5Password = MD5Config.MD5EncodeUtf8(password);
         User user = userMapper.checkPasswordByUsername(username, md5Password);
@@ -39,7 +43,7 @@ public class UserServiceImpl implements UserService {
         return HttpResult.createBySuccess("login success", user);
     }
 
-    @Override
+    @Transactional(rollbackFor = {DataAccessException.class, HappyMallException.class})
     public HttpResult<String> signUp(User user) {
         HttpResult result = this.checkValid(user.getUsername(), Const.USERNAME);
         if (!result.isSuccess()) {
@@ -63,17 +67,17 @@ public class UserServiceImpl implements UserService {
             if (Const.USERNAME.equals(type)) {
                 int resultCount = userMapper.checkUsername(str);
                 if (resultCount > 0) {
-                    return HttpResult.createByErrorMessage("Username is exited");
+                    throw new UserNoExitedException("user not exited");
                 }
             }
             if (Const.EMAIL.equals(type)) {
                 int resultCount = userMapper.checkEmail(str);
                 if (resultCount > 0) {
-                    return HttpResult.createByErrorMessage("Email is exited");
+                    throw new EmailNoExitedException("email not exited");
                 }
             }
         } else {
-            return HttpResult.createByErrorMessage("Illeage parameter");
+            return HttpResult.createByErrorMessage("Illegal parameter");
         }
         return HttpResult.createBySuccessMessage("Valid success");
     }
@@ -81,7 +85,7 @@ public class UserServiceImpl implements UserService {
     public HttpResult getQuestion(String username) {
         HttpResult result = this.checkValid(username, Const.USERNAME);
         if (result.isSuccess()) {
-            return HttpResult.createByErrorMessage("User is not exited");
+            throw new UserNoExitedException("user not exited");
         }
         String question = userMapper.selectQuestionByUsername(username);
         if (StringUtils.isNotBlank(question)) {
@@ -100,13 +104,14 @@ public class UserServiceImpl implements UserService {
         return HttpResult.createByErrorMessage("Wrong answer");
     }
 
-    public HttpResult<String> fofgetResetPassword(String username, String newPassword, String forgetToken) {
+    @Transactional(rollbackFor = {DataAccessException.class, HappyMallException.class})
+    public HttpResult<String> forgetResetPassword(String username, String newPassword, String forgetToken) {
         if (StringUtils.isBlank(forgetToken)) {
-            return HttpResult.createByErrorMessage("Illeage parameter,Token should not null");
+            return HttpResult.createByErrorMessage("Illegal parameter,Token should not null");
         }
         HttpResult result = this.checkValid(username, Const.USERNAME);
         if (result.isSuccess()) {
-            return HttpResult.createByErrorMessage("User is not exited");
+            throw new UserNoExitedException("user not exited");
         }
         String token = TokenCache.getKey(TokenCache.TOKEN_PREFIX + username);
         if (StringUtils.isBlank(token)) {
@@ -124,6 +129,7 @@ public class UserServiceImpl implements UserService {
         return HttpResult.createByErrorMessage("Reset password fail");
     }
 
+    @Transactional(rollbackFor = DataAccessException.class)
     public HttpResult<String> resetPassword(String password, String newPassword, User user) {
         int resultCount = userMapper.checkPassword(MD5Config.MD5EncodeUtf8(password), user.getId());
         if (resultCount == 0) {
@@ -137,10 +143,11 @@ public class UserServiceImpl implements UserService {
         return HttpResult.createByErrorMessage("update password fail");
     }
 
+    @Transactional(rollbackFor = {DataAccessException.class, HappyMallException.class})
     public HttpResult<User> updateUser(User user) {
         int resultCount = userMapper.checkEmailByUserId(user.getEmail(), user.getId());
         if (resultCount > 0) {
-            return HttpResult.createByErrorMessage("Email is exited");
+            throw new EmailNoExitedException("email not exited");
         }
         User updateUser = new User();
         updateUser.setId(user.getId());
@@ -158,7 +165,7 @@ public class UserServiceImpl implements UserService {
     public HttpResult<User> getUserDetail(Integer userId) {
         User user = userMapper.selectByPrimaryKey(userId);
         if (user == null) {
-            return HttpResult.createByErrorMessage("User not exit");
+            throw new UserNoExitedException("user not exited");
         }
         return HttpResult.createBySuccess(user);
     }

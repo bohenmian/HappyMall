@@ -11,13 +11,17 @@ import cn.edu.swpu.cins.entity.Category;
 import cn.edu.swpu.cins.entity.Product;
 import cn.edu.swpu.cins.enums.HttpResultEnum;
 import cn.edu.swpu.cins.enums.ProductStatusEnum;
+import cn.edu.swpu.cins.exception.HappyMallException;
+import cn.edu.swpu.cins.exception.ProductNoExitedException;
 import cn.edu.swpu.cins.service.ProductService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,6 +37,7 @@ public class ProductServiceImpl implements ProductService {
         this.categoryMapper = categoryMapper;
     }
 
+    @Transactional(rollbackFor = DataAccessException.class)
     public HttpResult saveOrUpdateProduct(Product product) {
         if (product != null) {
             if (StringUtils.isNotBlank(product.getSubImages())) {
@@ -55,9 +60,10 @@ public class ProductServiceImpl implements ProductService {
                 return HttpResult.createByErrorMessage("add product fail");
             }
         }
-        return HttpResult.createByErrorMessage("paramter is wrong");
+        return HttpResult.createByErrorMessage("parameter is wrong");
     }
 
+    @Transactional
     public HttpResult<String> setSaleStatus(Integer productId, Integer status) {
         if (productId == null || status == null) {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.ILLEGAL_ARGUMENT.getCode(), HttpResultEnum.ILLEGAL_ARGUMENT.getDescrption());
@@ -78,7 +84,7 @@ public class ProductServiceImpl implements ProductService {
         }
         Product product = productMapper.selectByPrimaryKey(productId);
         if (product == null) {
-            return HttpResult.createByErrorMessage("product not exit");
+            throw new ProductNoExitedException("product not exit");
         }
         ProductDetail productDetail = assembleProductDetail(product);
         return HttpResult.createBySuccess(productDetail);

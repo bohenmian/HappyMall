@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -27,9 +28,10 @@ public class CategoryServiceImpl implements CategoryService {
         this.categoryMapper = categoryMapper;
     }
 
+    @Transactional
     public HttpResult addCategory(String categoryName, Integer parentId) {
         if (parentId == null || StringUtils.isBlank(categoryName)) {
-            return HttpResult.createByErrorMessage("Wrong paramter");
+            return HttpResult.createByErrorMessage("Wrong parameter");
         }
         Category category = new Category();
         category.setName(categoryName);
@@ -42,9 +44,10 @@ public class CategoryServiceImpl implements CategoryService {
         return HttpResult.createByErrorMessage("Add category fail");
     }
 
+    @Transactional
     public HttpResult updateCategoryName(String categoryName, Integer parentId) {
         if (parentId == null || StringUtils.isBlank(categoryName)) {
-            return HttpResult.createByErrorMessage("Wrong paramter");
+            return HttpResult.createByErrorMessage("Wrong parameter");
         }
         Category category = new Category();
         category.setId(parentId);
