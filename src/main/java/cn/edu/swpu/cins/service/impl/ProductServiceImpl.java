@@ -10,7 +10,8 @@ import cn.edu.swpu.cins.dto.response.HttpResult;
 import cn.edu.swpu.cins.entity.Category;
 import cn.edu.swpu.cins.entity.Product;
 import cn.edu.swpu.cins.enums.HttpResultEnum;
-import cn.edu.swpu.cins.service.ProduceService;
+import cn.edu.swpu.cins.enums.ProductStatusEnum;
+import cn.edu.swpu.cins.service.ProductService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ProductServiceImpl implements ProduceService {
+public class ProductServiceImpl implements ProductService {
 
     private ProductMapper productMapper;
     private CategoryMapper categoryMapper;
@@ -71,7 +72,7 @@ public class ProductServiceImpl implements ProduceService {
         return HttpResult.createByErrorMessage("update product status fail");
     }
 
-    public HttpResult<Object> getProductDetail(Integer productId) {
+    public HttpResult<ProductDetail > manageProductDetail(Integer productId) {
         if (productId == null) {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.ILLEGAL_ARGUMENT.getCode(), HttpResultEnum.ILLEGAL_ARGUMENT.getDescrption());
         }
@@ -149,5 +150,20 @@ public class ProductServiceImpl implements ProduceService {
         PageInfo pageResult = new PageInfo(list);
         pageResult.setList(productVoList);
         return HttpResult.createBySuccess(pageResult);
+    }
+
+    public HttpResult<ProductDetail> getProductDetail(Integer productId) {
+        if (productId == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
+        }
+        Product product = productMapper.selectByPrimaryKey(productId);
+        if (product == null) {
+            return HttpResult.createByErrorMessage("search product not exited");
+        }
+        if (product.getStatus() != ProductStatusEnum.ON_SALE.getCode()) {
+            return HttpResult.createByErrorMessage("product had undercarriage");
+        }
+        ProductDetail productDetail = assembleProductDetail(product);
+        return HttpResult.createBySuccess(productDetail);
     }
 }
