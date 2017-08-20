@@ -81,7 +81,7 @@ public class UserController {
     @RequestMapping(value = "/forgetResetPassword", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult<String> forgetResetPassword(String username, String newPassword, String forgetToken) {
-        return userService.fofgetResetPassword(username, newPassword, forgetToken);
+        return userService.forgetResetPassword(username, newPassword, forgetToken);
     }
 
     @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
