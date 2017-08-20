@@ -30,7 +30,7 @@ public class ProductController {
     }
 
 
-    @RequestMapping(value = "/getProductList", method = RequestMethod.POST)
+    @RequestMapping(value = "/getProductList", method = RequestMethod.GET)
     @ResponseBody
     public HttpResult<PageInfo> getProductByKeyword(@RequestParam(value = "keyword", required = false) String keyword,
                                                     @RequestParam(value = "categoryId", required = false) Integer categoryId,
