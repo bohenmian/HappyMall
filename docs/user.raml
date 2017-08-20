@@ -18,13 +18,13 @@ description: RESTful APIs of happymall
           required: true
       responses:
         404:
-          description: fail
+          description: false
           body:
             application/json:
               example:
                 {
                   "status": 1,
-                  "msg": password error
+                  "msg": "password error"
                 }
         200:
           description: success
@@ -49,13 +49,13 @@ description: RESTful APIs of happymall
       description: user logout happymall
       responses:
         404:
-          description: fail
+          description: false
           body:
             application/json:
               example:
                 {
                   "status": 1,
-                  "msg": server exception
+                  "msg": "server exception"
                 }
         200:
           description: success
@@ -64,7 +64,7 @@ description: RESTful APIs of happymall
               example:
                 {
                   "status": 1,
-                  "msg": logout success
+                  "msg": "logout success"
                 }
   /signup:
     description: signUp a new user
@@ -76,13 +76,13 @@ description: RESTful APIs of happymall
           required: true
       responses:
         404:
-          description: fail
+          description: false
           body:
             application/json:
               example:
                 {
                   "status": 1,
-                  "msg": user has exited
+                  "msg": "user has exited"
                 }
         200:
           description: success
@@ -91,7 +91,7 @@ description: RESTful APIs of happymall
               example:
                 {
                   "status": 0,
-                  "msg": signUp success
+                  "msg": "signUp success"
                 }
   /checkValid:
     description: check new user
@@ -118,13 +118,13 @@ description: RESTful APIs of happymall
                 bohenmain@163.com
       responses:
         404:
-          description: fail
+          description: false
           body:
             appclication/json:
               example:
                 {
                   "status": 1,
-                  "msg": username or email has exited
+                  "msg": "username or email has exited"
                 }
         200:
           description: success
@@ -133,7 +133,7 @@ description: RESTful APIs of happymall
               example:
                 {
                   "status": 0,
-                  "msg": checkvalid success
+                  "msg": "checkvalid success"
                 }
   /getUserInfo:
     description: get user info
@@ -141,13 +141,13 @@ description: RESTful APIs of happymall
       description: get user info
       responses:
         404:
-          description: fail
+          description: false
           body:
             application/json:
               example:
                 {
                   "status": 1
-                  "msg": user need to login
+                  "msg": "user need to login"
                 }
         200:
           description: success
@@ -180,13 +180,13 @@ description: RESTful APIs of happymall
                 bohenmian
       responses:
         404:
-          description: fail
+          description: false
           body:
             application/json:
               example:
                 {
                   "status": 1,
-                  "msg": user not exited
+                  "msg": "user not exited"
                 }
         200:
           description: success
@@ -195,7 +195,7 @@ description: RESTful APIs of happymall
               example:
                 {
                   "status": 0,
-                  "msg": this is reset password question
+                  "msg": "this is reset password question"
                 }
   /checkAnswer:
     description: check user answer
@@ -216,13 +216,13 @@ description: RESTful APIs of happymall
           required: true
       responses:
         404:
-          description: fail
+          description: false
           body:
             application/json:
               example:
                 {
                   "status": 1,
-                  "msg": wrong answer
+                  "msg": "wrong answer"
                 }
         200:
           description: success
@@ -231,7 +231,7 @@ description: RESTful APIs of happymall
               example:
                 {
                   "status": 0,
-                  "data": 531ef4b4-9663-4e6d-9a20-fb56367446a5
+                  "data": "531ef4b4-9663-4e6d-9a20-fb56367446a5"
                 }
   /forgetResetPassword:
     description: forger password and reset password
@@ -252,13 +252,13 @@ description: RESTful APIs of happymall
           required: true
       responses:
         404:
-          description: fail
+          description: false
           body:
             application/json:
               example:
                 {
                   "status": 1,
-                  "msg": reset password fail
+                  "msg": "reset password fail”
                 }
         200:
           description: success
@@ -267,7 +267,7 @@ description: RESTful APIs of happymall
               example:
                 {
                   "status": 0,
-                  "msg": reset password success
+                  "msg": "reset password success"
                 }
   /resetPassword:
     description: reset password
@@ -284,13 +284,13 @@ description: RESTful APIs of happymall
           required: true
       responses:
         404:
-          description: fail
+          description: false
           body:
             application/json:
               example:
                 {
                   "status": 1,
-                  "msg": user not login
+                  "msg": "user not login"
                 }
         200:
           description: success
@@ -299,7 +299,7 @@ description: RESTful APIs of happymall
               example:
                 {
                   "status": 0,
-                  "msg": reset password success
+                  "msg": "reset password success"
                 }
   /updateUser:
     description:
@@ -311,13 +311,13 @@ description: RESTful APIs of happymall
           required: true
       responses:
         404:
-          description: fail
+          description: false
           body:
             application/json:
               example:
                 {
                   "status": 1,
-                  "msg": update info fail
+                  "msg": "update info fail"
                 }
         200:
           description: success
@@ -326,7 +326,7 @@ description: RESTful APIs of happymall
               example:
                 {
                   "status": 0,
-                  "msg": update info success
+                  "msg": "update info success"
                 }
   /getUserDetail:
     description:
@@ -334,13 +334,13 @@ description: RESTful APIs of happymall
       description: get user detail info
       responses:
         404:
-          description: fail
+          description: false
           body:
             application/json:
               example:
                 {
                   "status": 1,
-                  "msg": user need login
+                  "msg": "user need login"
                 }
         200:
           description: success
@@ -349,7 +349,7 @@ description: RESTful APIs of happymall
               example:
                 {
                   "status": 0,
-                  "msg": get user detail success
+                  "msg": "get user detail success"
                 }
 
 

@@ -5,6 +5,89 @@ description: RESTful APIs of happymall
 
 /manage:
   /category:
+    /addCategory:
+      description: user and a category
+      post:
+        description: add a category
+        queryParameters:
+          categoryName:
+            type: string
+            description: category name
+            required: true
+          categoryId:
+            type: integer
+            description: category id
+            required: true
+        responses:
+          404:
+            description: false
+            body:
+              application/json:
+                example:
+                  {
+                    "status": 1,
+                    "msg": "user need login"
+                  }
+          200:
+            description: success
+            body:
+              application/json:
+                example:
+                  {
+                    "status": 1,
+                    "msg": "add category success"
+                  }
+    /updateCategory:
+      description: user update category
+      post:
+        description: update category
+        responses:
+          404:
+            description: false
+            body:
+              application/json:
+                example:
+                  {
+                    "status": 1,
+                    "msg": "user need login"
+                  }
+          200:
+            description: false
+            body:
+              application/json:
+                example:
+                  {
+                    "status": 0,
+                    "msg": "update category success"
+                  }
+    /getChildrenCategoryId:
+      description: user get child category id
+      get:
+        description: get all child category id
+        queryParameters:
+          categoryId:
+            type: integer
+            description: category id
+            required: true
+        responses:
+          404:
+            description: false
+            body:
+              application/json:
+                example:
+                  {
+                    "status": 1,
+                    "msg": "user need login"
+                  }
+          200:
+            description:
+            body:
+              application/json:
+                example:
+                  {
+                    "status": 0,
+                    "msg": "get child category id success"
+                  }
     /getCategoryId:
       description: get all categories
       get:
@@ -16,7 +99,7 @@ description: RESTful APIs of happymall
             required: true
         responses:
           404:
-            description: fail
+            description: false
             body:
               application/json:
                 example:
