@@ -6,6 +6,7 @@ import cn.edu.swpu.cins.dao.CategoryMapper;
 import cn.edu.swpu.cins.dao.ProductMapper;
 import cn.edu.swpu.cins.dto.request.ProductDetail;
 import cn.edu.swpu.cins.dto.request.ProductVo;
+import cn.edu.swpu.cins.dto.response.Const;
 import cn.edu.swpu.cins.dto.response.HttpResult;
 import cn.edu.swpu.cins.entity.Category;
 import cn.edu.swpu.cins.entity.Product;
@@ -13,6 +14,7 @@ import cn.edu.swpu.cins.enums.HttpResultEnum;
 import cn.edu.swpu.cins.enums.ProductStatusEnum;
 import cn.edu.swpu.cins.exception.HappyMallException;
 import cn.edu.swpu.cins.exception.ProductNoExitedException;
+import cn.edu.swpu.cins.service.CategoryService;
 import cn.edu.swpu.cins.service.ProductService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -23,6 +25,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,11 +33,14 @@ public class ProductServiceImpl implements ProductService {
 
     private ProductMapper productMapper;
     private CategoryMapper categoryMapper;
+    private CategoryService categoryService;
 
     @Autowired
-    public ProductServiceImpl(ProductMapper productMapper, CategoryMapper categoryMapper) {
+    public ProductServiceImpl(ProductMapper productMapper, CategoryMapper categoryMapper,
+                              CategoryService categoryService) {
         this.productMapper = productMapper;
         this.categoryMapper = categoryMapper;
+        this.categoryService = categoryService;
     }
 
     @Transactional(rollbackFor = DataAccessException.class)
@@ -60,7 +66,7 @@ public class ProductServiceImpl implements ProductService {
                 return HttpResult.createByErrorMessage("add product fail");
             }
         }
-        return HttpResult.createByErrorMessage("parameter is wrong");
+        return HttpResult.createByErrorMessage("parameter is illegal");
     }
 
     @Transactional
@@ -147,7 +153,7 @@ public class ProductServiceImpl implements ProductService {
             productName = new StringBuilder().append("%").append("%").toString();
         }
 
-        List<Product> list = productMapper.selectNameAndId(productName, prodcutId);
+        List<Product> list = productMapper.selectByNameAndproductId(productName, prodcutId);
         List<ProductVo> productVoList = Lists.newArrayList();
         for (Product productItem : list) {
             ProductVo productVo = assembleProductList(productItem);
@@ -172,4 +178,42 @@ public class ProductServiceImpl implements ProductService {
         ProductDetail productDetail = assembleProductDetail(product);
         return HttpResult.createBySuccess(productDetail);
     }
+
+    public HttpResult<PageInfo> getProductByKeyword(String keyword, Integer categoryId, int pageNum, int pageSize, String orderBy) {
+        if (StringUtils.isBlank(keyword) && categoryId == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.ILLEGAL_ARGUMENT.getCode(), HttpResultEnum.ILLEGAL_ARGUMENT.getDescrption());
+        }
+        List<Integer> categoryIdList = new ArrayList<Integer>();
+        if (categoryId != null) {
+            Category category = categoryMapper.selectByPrimaryKey(categoryId);
+            if (category == null && StringUtils.isBlank(keyword)) {
+                PageHelper.startPage(pageNum, pageSize);
+                List<ProductVo> productVoList = Lists.newArrayList();
+                PageInfo pageInfo = new PageInfo(productVoList);
+                return HttpResult.createBySuccess(pageInfo);
+            }
+        categoryIdList = categoryService.getCategory(categoryId).getData();
+        }
+        if (StringUtils.isNotBlank(keyword)) {
+            keyword = new StringBuilder().append("%").append(keyword).append("%").toString();
+        }
+        PageHelper.startPage(pageNum, pageSize);
+        if (StringUtils.isNotBlank(orderBy)) {
+            if (Const.ProductListOrderBy.PRICE_ASC_DESC.contains(orderBy)) {
+                String[] orderByArray = orderBy.split("_");
+                PageHelper.orderBy(orderByArray[0] + " " + orderByArray[1]);
+            }
+        }
+        List<Product> productList = productMapper.selectByNameAndCategoryId(StringUtils.isNotBlank(keyword) ? null : keyword,
+                 categoryIdList.size() == 0 ? null : categoryIdList);
+        List<ProductVo> productVoList = Lists.newArrayList();
+        for (Product product : productList) {
+            ProductVo productVo = assembleProductList(product);
+            productVoList.add(productVo);
+        }
+        PageInfo pageInfo = new PageInfo(productList);
+        pageInfo.setList(productVoList);
+        return HttpResult.createBySuccess(pageInfo);
+    }
+
 }

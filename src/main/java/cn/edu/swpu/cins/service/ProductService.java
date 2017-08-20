@@ -18,4 +18,6 @@ public interface ProductService {
     HttpResult<PageInfo> searchProduct(String productName, Integer prodcutId, int pageNum, int pageSize);
 
     HttpResult<ProductDetail> getProductDetail(Integer productId);
+
+    HttpResult<PageInfo> getProductByKeyword(String keyword, Integer categoryId, int pageNum, int pageSize, String orderBy);
 }
