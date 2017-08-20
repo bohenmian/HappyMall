@@ -13,5 +13,5 @@ public interface CategoryService {
 
     HttpResult<List<Category>> getChildrenParallelCategory(Integer categoryId);
 
-    HttpResult getCategory(Integer categoryId);
+    HttpResult<List<Integer>> getCategory(Integer categoryId);
 }

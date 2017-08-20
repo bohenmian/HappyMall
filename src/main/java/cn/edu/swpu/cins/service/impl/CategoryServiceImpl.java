@@ -67,7 +67,7 @@ public class CategoryServiceImpl implements CategoryService {
         return HttpResult.createBySuccess(list);
     }
 
-    public HttpResult getCategory(Integer categoryId) {
+    public HttpResult<List<Integer>> getCategory(Integer categoryId) {
         Set<Category> categorySet = Sets.newHashSet();
         findChildCategory(categorySet, categoryId);
         List<Integer> categoryIdList = Lists.newArrayList();
