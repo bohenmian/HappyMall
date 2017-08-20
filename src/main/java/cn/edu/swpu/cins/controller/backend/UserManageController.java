@@ -23,7 +23,7 @@ public class UserManageController {
         this.userService = userService;
     }
 
-    @RequestMapping(value = "login", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult<User> login(String username, String password, HttpSession session) {
         HttpResult<User> result = userService.login(username, password);

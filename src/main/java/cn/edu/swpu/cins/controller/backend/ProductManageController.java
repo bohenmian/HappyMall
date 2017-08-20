@@ -7,7 +7,7 @@ import cn.edu.swpu.cins.entity.Product;
 import cn.edu.swpu.cins.entity.User;
 import cn.edu.swpu.cins.enums.HttpResultEnum;
 import cn.edu.swpu.cins.service.FileService;
-import cn.edu.swpu.cins.service.ProduceService;
+import cn.edu.swpu.cins.service.ProductService;
 import cn.edu.swpu.cins.service.UserService;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
@@ -29,18 +29,18 @@ import java.util.Map;
 public class ProductManageController {
 
     private UserService userService;
-    private ProduceService produceService;
+    private ProductService productService;
     private FileService fileService;
 
     @Autowired
-    public ProductManageController(UserService userService, ProduceService produceService,
+    public ProductManageController(UserService userService, ProductService productService,
                                    FileService fileService) {
         this.userService = userService;
-        this.produceService = produceService;
+        this.productService = productService;
         this.fileService = fileService;
     }
 
-    @RequestMapping(value = "/save", method = RequestMethod.PUT)
+    @RequestMapping(value = "/addProduct", method = RequestMethod.PUT)
     @ResponseBody
     public HttpResult productSave(HttpSession session, Product product) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
@@ -48,7 +48,7 @@ public class ProductManageController {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), "user need login");
         }
         if (userService.checkAdminRole(user).isSuccess()) {
-            return produceService.saveOrUpdateProduct(product);
+            return productService.saveOrUpdateProduct(product);
         } else {
             return HttpResult.createByErrorMessage("save product need admin authority");
         }
@@ -62,7 +62,7 @@ public class ProductManageController {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), "user need login");
         }
         if (userService.checkAdminRole(user).isSuccess()) {
-            return produceService.setSaleStatus(product.getId(), product.getStatus());
+            return productService.setSaleStatus(product.getId(), product.getStatus());
         } else {
             return HttpResult.createByErrorMessage("set product status need admin authority");
         }
@@ -76,7 +76,7 @@ public class ProductManageController {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), "user need login");
         }
         if (userService.checkAdminRole(user).isSuccess()) {
-            return produceService.getProductDetail(productId);
+            return productService.manageProductDetail(productId);
         } else {
             return HttpResult.createByErrorMessage("need admin authority");
         }
@@ -92,7 +92,7 @@ public class ProductManageController {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), "user need login");
         }
         if (userService.checkAdminRole(user).isSuccess()) {
-            return produceService.getProductList(pageNum, pageSize);
+            return productService.getProductList(pageNum, pageSize);
         } else {
             return HttpResult.createByErrorMessage("need admin authority");
         }
@@ -108,7 +108,7 @@ public class ProductManageController {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
         }
         if (userService.checkAdminRole(user).isSuccess()) {
-            return produceService.searchProduct(productName, productId, pageNum, pageSize);
+            return productService.searchProduct(productName, productId, pageNum, pageSize);
         } else {
             return HttpResult.createByErrorMessage("need admin authority");
         }
