@@ -25,6 +25,16 @@ public class CartController {
         this.cartService = cartService;
     }
 
+    @RequestMapping(value = "/getList", method = RequestMethod.GET)
+    @ResponseBody
+    public HttpResult<CartVo> addProductToCart(HttpSession session) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
+        }
+        return cartService.getList(user.getId());
+    }
+
 
     @RequestMapping(value = "/addProductToCart", method = RequestMethod.POST)
     @ResponseBody

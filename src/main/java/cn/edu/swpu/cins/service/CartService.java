@@ -10,4 +10,6 @@ public interface CartService {
     HttpResult<CartVo> updateCart(Integer userId, Integer productId, Integer count);
 
     HttpResult<CartVo> deleteProduct(Integer userId, String productIds);
+
+    HttpResult<CartVo> getList(Integer userId);
 }

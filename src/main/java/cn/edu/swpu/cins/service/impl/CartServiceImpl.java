@@ -79,6 +79,11 @@ public class CartServiceImpl implements CartService {
         return HttpResult.createBySuccess(cartVo);
     }
 
+    public HttpResult<CartVo> getList(Integer userId) {
+        CartVo cartVo = this.getCartVoLimit(userId);
+        return HttpResult.createBySuccess(cartVo);
+    }
+
     private CartVo getCartVoLimit(Integer userId) {
         CartVo cartVo = new CartVo();
         List<Cart> cartList = cartMapper.selectByUserId(userId);
