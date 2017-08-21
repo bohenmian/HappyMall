@@ -6,4 +6,6 @@ import cn.edu.swpu.cins.dto.view.CartVo;
 public interface CartService {
 
     HttpResult<CartVo> add(Integer userId, Integer productId, Integer count);
+
+    HttpResult<CartVo> updateCart(Integer userId, Integer productId, Integer count);
 }

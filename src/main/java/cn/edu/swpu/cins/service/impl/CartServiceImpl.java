@@ -53,6 +53,19 @@ public class CartServiceImpl implements CartService {
         return HttpResult.createBySuccess(cartVo);
     }
 
+    public HttpResult<CartVo> updateCart(Integer userId, Integer productId, Integer count) {
+        if (productId == null || count == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.ILLEGAL_ARGUMENT.getCode(), HttpResultEnum.ILLEGAL_ARGUMENT.getDescrption());
+        }
+        Cart cart = cartMapper.selectCartByUserIdAndProductId(userId, productId);
+        if (cart != null) {
+            cart.setQuantity(count);
+        }
+        cartMapper.updateByPrimaryKeySelective(cart);
+        CartVo cartVo = this.getCartVoLimit(userId);
+        return HttpResult.createBySuccess(cartVo);
+    }
+
     private CartVo getCartVoLimit(Integer userId) {
         CartVo cartVo = new CartVo();
         List<Cart> cartList = cartMapper.selectByUserId(userId);
@@ -85,11 +98,13 @@ public class CartServiceImpl implements CartService {
                         cartMapper.updateByPrimaryKeySelective(cartForQuantity);
                     }
                     cartProductVo.setQuantity(buyLimitCount);
+                    //TODO NullPointerException
                     cartProductVo.setProductTotalPrice(BigDecimalConfig.mul(product.getPrice().doubleValue(), cartProductVo.getQuantity()));
                     cartProductVo.setProductChecked(cartItem.getChecked());
                 }
                 if (cartItem.getChecked() == Const.Cart.CHECKED) {
                     cartTotalPrice = BigDecimalConfig.add(cartTotalPrice.doubleValue(), cartProductVo.getProductTotalPrice().doubleValue());
+
                 }
                 cartProductVoList.add(cartProductVo);
             }
@@ -107,4 +122,6 @@ public class CartServiceImpl implements CartService {
         }
         return cartMapper.selectCartProductCheckStatusByUserId(userId) == 0;
     }
+
+
 }

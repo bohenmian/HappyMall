@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
 
@@ -26,11 +27,22 @@ public class CartController {
 
 
     @RequestMapping(value = "/addProductToCart", method = RequestMethod.POST)
+    @ResponseBody
     public HttpResult<CartVo> addProductToCart(HttpSession session, Integer count, Integer productId) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
         }
-        return cartService.add(user.getId(), productId, count);
+        return cartService.add(user.getId(), count, productId);
+    }
+
+    @RequestMapping(value = "/updateCart", method = RequestMethod.PUT)
+    @ResponseBody
+    public HttpResult<CartVo> updateCart(HttpSession session, Integer count, Integer productId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
+        }
+        return cartService.updateCart(user.getId(), productId, count);
     }
 }
