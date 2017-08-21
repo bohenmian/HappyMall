@@ -1,7 +1,7 @@
 package cn.edu.swpu.cins.service.impl;
 
 import cn.edu.swpu.cins.dao.CategoryMapper;
-import cn.edu.swpu.cins.dto.response.HttpResult;
+import cn.edu.swpu.cins.dto.http.HttpResult;
 import cn.edu.swpu.cins.entity.Category;
 import cn.edu.swpu.cins.service.CategoryService;
 import com.google.common.collect.Lists;
@@ -89,8 +89,5 @@ public class CategoryServiceImpl implements CategoryService {
             findChildCategory(categorySet, categoryItem.getId());
         }
         return categorySet;
-
     }
-
-
 }

@@ -1,8 +1,8 @@
 package cn.edu.swpu.cins.controller.backend;
 
 import cn.edu.swpu.cins.config.PropertiesConfig;
-import cn.edu.swpu.cins.dto.response.Const;
-import cn.edu.swpu.cins.dto.response.HttpResult;
+import cn.edu.swpu.cins.dto.http.Const;
+import cn.edu.swpu.cins.dto.http.HttpResult;
 import cn.edu.swpu.cins.entity.Product;
 import cn.edu.swpu.cins.entity.User;
 import cn.edu.swpu.cins.enums.HttpResultEnum;
@@ -121,16 +121,15 @@ public class ProductManageController {
                                  HttpServletRequest request){
         User user = (User)session.getAttribute(Const.CURRENT_USER);
         if(user == null){
-            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(),"user need login in");
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), "user need login in");
         }
         if(userService.checkAdminRole(user).isSuccess()){
             String path = request.getSession().getServletContext().getRealPath("upload");
             String targetFileName = fileService.upload(file, path);
-            String url = PropertiesConfig.getProperties("ftp.server.http.prefix")+targetFileName;
-
+            String url = PropertiesConfig.getProperties("ftp.server.http.prefix") + targetFileName;
             Map fileMap = Maps.newHashMap();
-            fileMap.put("uri",targetFileName);
-            fileMap.put("url",url);
+            fileMap.put("uri", targetFileName);
+            fileMap.put("url", url);
             return HttpResult.createBySuccess(fileMap);
         }else{
             return HttpResult.createByErrorMessage("need admin authority");
@@ -149,7 +148,6 @@ public class ProductManageController {
             resultMap.put("msg", "please login in admin");
             return resultMap;
         }
-
         if (userService.checkAdminRole(user).isSuccess()) {
             String path = request.getSession().getServletContext().getRealPath("upload");
             String targetFileName = fileService.upload(file, path);

@@ -2,9 +2,9 @@ package cn.edu.swpu.cins.service.impl;
 
 import cn.edu.swpu.cins.config.MD5Config;
 import cn.edu.swpu.cins.dao.UserMapper;
-import cn.edu.swpu.cins.dto.response.Const;
-import cn.edu.swpu.cins.dto.response.HttpResult;
-import cn.edu.swpu.cins.dto.response.TokenCache;
+import cn.edu.swpu.cins.dto.http.Const;
+import cn.edu.swpu.cins.dto.http.HttpResult;
+import cn.edu.swpu.cins.dto.http.TokenCache;
 import cn.edu.swpu.cins.entity.User;
 import cn.edu.swpu.cins.exception.EmailNoExitedException;
 import cn.edu.swpu.cins.exception.HappyMallException;

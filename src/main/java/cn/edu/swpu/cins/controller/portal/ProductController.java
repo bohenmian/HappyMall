@@ -1,8 +1,8 @@
 package cn.edu.swpu.cins.controller.portal;
 
 
-import cn.edu.swpu.cins.dto.request.ProductDetail;
-import cn.edu.swpu.cins.dto.response.HttpResult;
+import cn.edu.swpu.cins.dto.view.ProductDetail;
+import cn.edu.swpu.cins.dto.http.HttpResult;
 import cn.edu.swpu.cins.service.ProductService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+
 
 @Controller
 @RequestMapping("/product")

@@ -1,8 +1,8 @@
 package cn.edu.swpu.cins.controller.backend;
 
 
-import cn.edu.swpu.cins.dto.response.Const;
-import cn.edu.swpu.cins.dto.response.HttpResult;
+import cn.edu.swpu.cins.dto.http.Const;
+import cn.edu.swpu.cins.dto.http.HttpResult;
 import cn.edu.swpu.cins.entity.User;
 import cn.edu.swpu.cins.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

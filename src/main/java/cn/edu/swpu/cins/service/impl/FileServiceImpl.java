@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -17,6 +18,7 @@ public class FileServiceImpl implements FileService {
 
     private static Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
 
+    @Transactional
     public String upload(MultipartFile file, String path) {
         String fileName = file.getOriginalFilename();
         String fileExtensionName = fileName.substring(fileName.lastIndexOf(".") + 1);

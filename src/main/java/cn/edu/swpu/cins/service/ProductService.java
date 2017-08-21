@@ -1,7 +1,7 @@
 package cn.edu.swpu.cins.service;
 
-import cn.edu.swpu.cins.dto.request.ProductDetail;
-import cn.edu.swpu.cins.dto.response.HttpResult;
+import cn.edu.swpu.cins.dto.view.ProductDetail;
+import cn.edu.swpu.cins.dto.http.HttpResult;
 import cn.edu.swpu.cins.entity.Product;
 import com.github.pagehelper.PageInfo;
 

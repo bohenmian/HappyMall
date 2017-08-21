@@ -1,6 +1,6 @@
 package cn.edu.swpu.cins.service;
 
-import cn.edu.swpu.cins.dto.response.HttpResult;
+import cn.edu.swpu.cins.dto.http.HttpResult;
 import cn.edu.swpu.cins.entity.Category;
 
 import java.util.List;
