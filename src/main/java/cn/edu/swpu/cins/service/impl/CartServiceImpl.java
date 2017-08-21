@@ -12,10 +12,12 @@ import cn.edu.swpu.cins.entity.Cart;
 import cn.edu.swpu.cins.entity.Product;
 import cn.edu.swpu.cins.enums.HttpResultEnum;
 import cn.edu.swpu.cins.service.CartService;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -32,6 +34,7 @@ public class CartServiceImpl implements CartService {
         this.productMapper = productMapper;
     }
 
+    @Transactional
     public HttpResult<CartVo> add(Integer userId, Integer productId, Integer count) {
         if (productId == null || count == null) {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.ILLEGAL_ARGUMENT.getCode(), HttpResultEnum.ILLEGAL_ARGUMENT.getDescrption());
@@ -62,6 +65,16 @@ public class CartServiceImpl implements CartService {
             cart.setQuantity(count);
         }
         cartMapper.updateByPrimaryKeySelective(cart);
+        CartVo cartVo = this.getCartVoLimit(userId);
+        return HttpResult.createBySuccess(cartVo);
+    }
+
+    public HttpResult<CartVo> deleteProduct(Integer userId, String productIds) {
+        List<String> productList = Splitter.on(",").splitToList(productIds);
+        if (CollectionUtils.isEmpty(productList)) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.ILLEGAL_ARGUMENT.getCode(), HttpResultEnum.ILLEGAL_ARGUMENT.getDescrption());
+        }
+        cartMapper.deleteByUserIdAndProductId(userId, productList);
         CartVo cartVo = this.getCartVoLimit(userId);
         return HttpResult.createBySuccess(cartVo);
     }

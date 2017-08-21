@@ -45,4 +45,14 @@ public class CartController {
         }
         return cartService.updateCart(user.getId(), productId, count);
     }
+
+    @RequestMapping(value = "/deleteProduct", method = RequestMethod.DELETE)
+    @ResponseBody
+    public HttpResult<CartVo> deleteProduct(HttpSession session, String productIds) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
+        }
+        return cartService.deleteProduct(user.getId(), productIds);
+    }
 }
