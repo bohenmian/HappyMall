@@ -18,6 +18,9 @@ public class CartProductVo {
     private Integer productChecked;
     private String limitQuantity;
 
+    public CartProductVo() {
+    }
+
     public CartProductVo(Integer id, Integer userId, Integer productId,
                          Integer quantity, String productName, String productSubtitle,
                          String productMainImage, BigDecimal productPrice, Integer productStatus,
