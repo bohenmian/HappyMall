@@ -1,6 +1,7 @@
 package cn.edu.swpu.cins.service.impl;
 
 import cn.edu.swpu.cins.config.BigDecimalConfig;
+import cn.edu.swpu.cins.config.PropertiesConfig;
 import cn.edu.swpu.cins.dao.CartMapper;
 import cn.edu.swpu.cins.dao.ProductMapper;
 import cn.edu.swpu.cins.dto.http.Const;
@@ -9,6 +10,7 @@ import cn.edu.swpu.cins.dto.view.CartProductVo;
 import cn.edu.swpu.cins.dto.view.CartVo;
 import cn.edu.swpu.cins.entity.Cart;
 import cn.edu.swpu.cins.entity.Product;
+import cn.edu.swpu.cins.enums.HttpResultEnum;
 import cn.edu.swpu.cins.service.CartService;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
@@ -30,7 +32,10 @@ public class CartServiceImpl implements CartService {
         this.productMapper = productMapper;
     }
 
-    public HttpResult add(Integer userId, Integer productId, Integer count) {
+    public HttpResult<CartVo> add(Integer userId, Integer productId, Integer count) {
+        if (productId == null || count == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.ILLEGAL_ARGUMENT.getCode(), HttpResultEnum.ILLEGAL_ARGUMENT.getDescrption());
+        }
         Cart cart = cartMapper.selectCartByUserIdAndProductId(userId, productId);
         if (cart == null) {
             Cart cartItem = new Cart();
@@ -44,7 +49,8 @@ public class CartServiceImpl implements CartService {
             cart.setQuantity(count);
             cartMapper.updateByPrimaryKeySelective(cart);
         }
-        return null;
+        CartVo cartVo = this.getCartVoLimit(userId);
+        return HttpResult.createBySuccess(cartVo);
     }
 
     private CartVo getCartVoLimit(Integer userId) {
@@ -90,7 +96,15 @@ public class CartServiceImpl implements CartService {
         }
         cartVo.setCartTotalPrice(cartTotalPrice);
         cartVo.setCartProductVoList(cartProductVoList);
-        //TODO
-        return null;
+        cartVo.setAllChecked(this.getAllCheckedStatus(userId));
+        cartVo.setImageHost(PropertiesConfig.getProperties("ftp.server.http.prefix"));
+        return cartVo;
+    }
+
+    private boolean getAllCheckedStatus(Integer userId) {
+        if (userId == null) {
+            return false;
+        }
+        return cartMapper.selectCartProductCheckStatusByUserId(userId) == 0;
     }
 }

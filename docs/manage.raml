@@ -4,6 +4,67 @@ version: 1.0
 description: RESTful APIs of happymall
 
 /manage:
+  /user:
+    /login:
+      description: add login in happymall
+      post:
+        description: admin login
+        queryParameters:
+          username:
+            type: string
+            description: admin name
+            required: true
+          password:
+            type: string
+            description: admin password
+            required: true
+        responses:
+          404:
+            description: false
+            body:
+              application/json:
+                example:
+                  {
+                    "status": 1,
+                    "msg": "admin login fail"
+                  }
+          200:
+            description: false
+            body:
+              application/json:
+                example:
+                  {
+                    "status": 0,
+                    "msg": "admin login success"
+                  }
+  /product:
+    /addProduct:
+      description: add a product
+      post:
+        description: add product
+        queryParameters:
+          Product:
+            type: Product
+            required: true
+        responses:
+          404:
+            description: false
+            body:
+              application/json:
+                example:
+                  {
+                    "status": 1,
+                    "msg": "add product fail"
+                  }
+          200:
+            description: success
+            body:
+              application/json:
+                example:
+                  {
+                    "status": 0,
+                    "msg": "add product success"
+                  }
   /category:
     /addCategory:
       description: user and a category
@@ -122,3 +183,39 @@ description: RESTful APIs of happymall
                       100008
                       ]
                   }
+types:
+  Product:
+    type: object
+    properties:
+      id:
+        description: product id
+        type: integer
+      categoryId:
+        description: category id
+        type: integer
+      name:
+        description: product name
+        type: string
+      subtitle:
+        description: product title
+        type: string
+      mainImage:
+        description: product main image
+        type: string
+      subImages:
+        description: product sub image
+        type: string
+      detail:
+        description: product detail
+        type: string
+      price:
+        description: product price
+        type: object
+      stock:
+        description: product stock
+        type: integer
+      status:
+        description: product status
+        type: integer
+
+
