@@ -1,4 +1,4 @@
-package cn.edu.swpu.cins.dto.response;
+package cn.edu.swpu.cins.dto.http;
 
 import com.google.common.collect.Sets;
 
@@ -13,9 +13,13 @@ public class Const {
         Set<String> PRICE_ASC_DESC = Sets.newHashSet("price_desc", "price_asc");
     }
 
-
     public interface Role{
         int ROLE_CUSTOMER = 0;
         int ROLE_ADMIN = 1;
+    }
+
+    public interface Cart{
+        int CHECKED = 1;
+        int UN_CHECKED = 0;
     }
 }

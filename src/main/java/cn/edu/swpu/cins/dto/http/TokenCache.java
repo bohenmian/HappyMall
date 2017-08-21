@@ -1,4 +1,4 @@
-package cn.edu.swpu.cins.dto.response;
+package cn.edu.swpu.cins.dto.http;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

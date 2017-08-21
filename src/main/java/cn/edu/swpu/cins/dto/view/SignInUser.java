@@ -1,4 +1,4 @@
-package cn.edu.swpu.cins.dto.request;
+package cn.edu.swpu.cins.dto.view;
 
 public class SignInUser {
 

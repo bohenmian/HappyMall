@@ -1,4 +1,4 @@
-package cn.edu.swpu.cins.dto.response;
+package cn.edu.swpu.cins.dto.http;
 
 import cn.edu.swpu.cins.enums.HttpResultEnum;
 import org.codehaus.jackson.annotate.JsonIgnore;

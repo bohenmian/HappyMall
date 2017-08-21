@@ -1,4 +1,4 @@
-package cn.edu.swpu.cins.dto.request;
+package cn.edu.swpu.cins.dto.view;
 
 import cn.edu.swpu.cins.config.PropertiesConfig;
 import cn.edu.swpu.cins.entity.Product;
@@ -30,6 +30,8 @@ public class ProductVo {
         this.status = status;
         this.imageHost = imageHost;
     }
+
+
 
     public Integer getId() {
         return id;
