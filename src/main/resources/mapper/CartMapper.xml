@@ -132,11 +132,11 @@
     WHERE user_id = #{userId}
   </select>
 
-  <select id="selectCartProductCheckStatusByUserId" parameterType="int" resultType="int">
+  <select id="selectCartProductCheckStatusByUserId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
     SELECT COUNT(1) FROM mmall_cart WHERE checked = 0 AND user_id = #{userId}
   </select>
   
-  <delete id="deleteByUserIdAndProductId" parameterMap="map">
+  <delete id="deleteByUserIdAndProductId" parameterType="map">
     DELETE FROM mmall_cart WHERE user_id = #{userId}
     <if test="productIdList != null">
       <foreach collection="productIdList" item="item" index="index" open="(" separator="," close=")">
