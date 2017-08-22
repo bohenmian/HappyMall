@@ -18,7 +18,8 @@ CREATE TABLE `mmall_cart` (
   KEY `user_id_index` (`user_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=146 DEFAULT CHARSET=utf8;
 BEGIN;
-INSERT INTO `mmall_cart` VALUES ('126', '21', '26', '1', '1', '2017-04-13 21:27:06', '2017-04-13 21:27:06');
+INSERT INTO `mmall_cart` VALUES ('126', '21', '26', '10', '1', '2017-04-13 21:27:06', '2017-04-13 21:27:06');
+INSERT INTO `mmall_cart` VALUES ('127', '21', '27', '10', '1', '2017-08-21 20:18:45', '2017-08-21 20:32:13');
 COMMIT;
 
 DROP TABLE IF EXISTS `mmall_category`;
