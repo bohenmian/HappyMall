@@ -9,6 +9,8 @@ import cn.edu.swpu.cins.service.ShippingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
 
@@ -23,12 +25,24 @@ public class ShippingController {
         this.shippingService = shippingService;
     }
 
+    @RequestMapping(value = "/addAddress", method = RequestMethod.POST)
+    @ResponseBody
     public HttpResult addAddress(HttpSession session, Shipping shipping) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
         }
         return shippingService.addAddress(user.getId(), shipping);
+    }
+
+    @RequestMapping(value = "/deleteAddress", method = RequestMethod.DELETE)
+    @ResponseBody
+    public HttpResult deleteAddress(HttpSession session, Integer shippingId ) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
+        }
+        return shippingService.deleteAddress(user.getId(), shippingId);
     }
 
 }

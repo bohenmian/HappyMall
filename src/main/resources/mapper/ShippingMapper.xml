@@ -176,4 +176,8 @@
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <delete id="deleteByShippingIdUserId" parameterType="map">
+    DELETE FROM mmall_shipping WHERE id = #{shippingId} AND user_id = #{userId}
+  </delete>
 </mapper>
