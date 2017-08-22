@@ -8,4 +8,6 @@ public interface ShippingService {
     HttpResult addAddress(Integer userId, Shipping shipping);
 
     HttpResult<String> deleteAddress(Integer userId, Integer shippingId);
+
+    HttpResult updateAddress(Integer userId, Shipping shipping);
 }

@@ -40,4 +40,13 @@ public class ShippingServiceImpl implements ShippingService {
         return HttpResult.createByErrorMessage("delete address fail");
     }
 
+    public HttpResult updateAddress(Integer userId, Shipping shipping) {
+        shipping.setUserId(userId);
+        int rowCount = shippingMapper.updateByShipping(shipping);
+        if (rowCount > 0) {
+            return HttpResult.createBySuccess("update address success");
+        }
+        return HttpResult.createByErrorMessage("update address fail");
+    }
+
 }

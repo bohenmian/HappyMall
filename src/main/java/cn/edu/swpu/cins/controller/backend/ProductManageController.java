@@ -13,10 +13,7 @@ import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,7 +39,7 @@ public class ProductManageController {
 
     @RequestMapping(value = "/addProduct", method = RequestMethod.PUT)
     @ResponseBody
-    public HttpResult productSave(HttpSession session, Product product) {
+    public HttpResult productSave(HttpSession session, @RequestBody Product product) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), "user need login");
@@ -56,7 +53,7 @@ public class ProductManageController {
 
     @RequestMapping(value = "/setStatus", method = RequestMethod.POST)
     @ResponseBody
-    public HttpResult setSaleStatus(HttpSession session, Product product) {
+    public HttpResult setSaleStatus(HttpSession session, @RequestBody Product product) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), "user need login");
@@ -168,8 +165,4 @@ public class ProductManageController {
             return resultMap;
         }
     }
-
-
-
-
 }
