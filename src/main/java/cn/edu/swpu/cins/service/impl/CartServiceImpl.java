@@ -11,6 +11,7 @@ import cn.edu.swpu.cins.dto.view.CartVo;
 import cn.edu.swpu.cins.entity.Cart;
 import cn.edu.swpu.cins.entity.Product;
 import cn.edu.swpu.cins.enums.HttpResultEnum;
+import cn.edu.swpu.cins.exception.UserNoExitedException;
 import cn.edu.swpu.cins.service.CartService;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
@@ -55,6 +56,7 @@ public class CartServiceImpl implements CartService {
         return this.getList(userId);
     }
 
+    @Transactional
     public HttpResult<CartVo> updateCart(Integer userId, Integer productId, Integer count) {
         if (productId == null || count == null) {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.ILLEGAL_ARGUMENT.getCode(), HttpResultEnum.ILLEGAL_ARGUMENT.getDescrption());
@@ -85,6 +87,14 @@ public class CartServiceImpl implements CartService {
         cartMapper.checkedOrUnCheckedProduct(userId, productId, checked);
         return this.getList(userId);
     }
+
+    public HttpResult<Integer> getProductCount(Integer userId) {
+        if (userId == null) {
+            throw new UserNoExitedException("user not exited");
+        }
+        return HttpResult.createBySuccess(cartMapper.selectCartProductCount(userId));
+    }
+
 
 
     private CartVo getCartVoLimit(Integer userId) {

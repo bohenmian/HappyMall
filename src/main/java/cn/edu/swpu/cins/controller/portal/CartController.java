@@ -106,4 +106,13 @@ public class CartController {
         return cartService.selectAll(user.getId(), productId, Const.Cart.UN_CHECKED);
     }
 
+    @RequestMapping(value = "/getProductCount", method = RequestMethod.GET)
+    @ResponseBody
+    public HttpResult<Integer> getProductCount(HttpSession session) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorMessage("user need login");
+        }
+        return cartService.getProductCount(user.getId());
+    }
 }

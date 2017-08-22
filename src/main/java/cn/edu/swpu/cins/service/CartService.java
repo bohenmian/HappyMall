@@ -15,4 +15,6 @@ public interface CartService {
 
     HttpResult<CartVo> selectAll(Integer userId, Integer productId, Integer checked);
 
+    HttpResult<Integer> getProductCount(Integer userId);
+
 }
