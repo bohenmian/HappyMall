@@ -3,11 +3,15 @@ package cn.edu.swpu.cins.service.impl;
 import cn.edu.swpu.cins.dao.ShippingMapper;
 import cn.edu.swpu.cins.dto.http.HttpResult;
 import cn.edu.swpu.cins.entity.Shipping;
+import cn.edu.swpu.cins.exception.AddressNotExitedException;
 import cn.edu.swpu.cins.service.ShippingService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -49,4 +53,19 @@ public class ShippingServiceImpl implements ShippingService {
         return HttpResult.createByErrorMessage("update address fail");
     }
 
+
+    public HttpResult<Shipping> selectAddress(Integer userId, Integer shippingId) {
+        Shipping shipping = shippingMapper.selectByShippingIdUserId(userId, shippingId);
+        if (shipping == null) {
+            throw new AddressNotExitedException("address not exit");
+        }
+        return HttpResult.createBySuccess("select address success", shipping);
+    }
+
+    public HttpResult<PageInfo> getList(Integer userId, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Shipping> list = shippingMapper.selectByUserId(userId);
+        PageInfo pageInfo = new PageInfo(list);
+        return HttpResult.createBySuccess(pageInfo);
+    }
 }
