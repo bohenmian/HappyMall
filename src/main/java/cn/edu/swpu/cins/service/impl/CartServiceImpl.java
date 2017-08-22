@@ -16,6 +16,8 @@ import cn.edu.swpu.cins.service.CartService;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -106,7 +108,7 @@ public class CartServiceImpl implements CartService {
             for (Cart cartItem : cartList) {
                 CartProductVo cartProductVo = new CartProductVo();
                 cartProductVo.setId(cartItem.getId());
-                cartProductVo.setUserId(cartItem.getUserId());
+                cartProductVo.setUserId(userId);
                 cartProductVo.setProductId(cartItem.getProductId());
                 Product product = productMapper.selectByPrimaryKey(cartItem.getProductId());
                 if (product != null) {
@@ -129,13 +131,11 @@ public class CartServiceImpl implements CartService {
                         cartMapper.updateByPrimaryKeySelective(cartForQuantity);
                     }
                     cartProductVo.setQuantity(buyLimitCount);
-                    //TODO NullPointerException
                     cartProductVo.setProductTotalPrice(BigDecimalConfig.mul(product.getPrice().doubleValue(), cartProductVo.getQuantity()));
                     cartProductVo.setProductChecked(cartItem.getChecked());
                 }
                 if (cartItem.getChecked() == Const.Cart.CHECKED) {
                     cartTotalPrice = BigDecimalConfig.add(cartTotalPrice.doubleValue(), cartProductVo.getProductTotalPrice().doubleValue());
-
                 }
                 cartProductVoList.add(cartProductVo);
             }

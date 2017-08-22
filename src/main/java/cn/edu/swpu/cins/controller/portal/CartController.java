@@ -38,12 +38,12 @@ public class CartController {
 
     @RequestMapping(value = "/addProductToCart", method = RequestMethod.POST)
     @ResponseBody
-    public HttpResult<CartVo> addProductToCart(HttpSession session, Integer count, Integer productId) {
+    public HttpResult<CartVo> addProductToCart(HttpSession session, Integer productId, Integer count) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
         }
-        return cartService.add(user.getId(), count, productId);
+        return cartService.add(user.getId(), productId, count);
     }
 
     @RequestMapping(value = "/updateCart", method = RequestMethod.PUT)
