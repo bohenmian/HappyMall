@@ -27,7 +27,7 @@ public class CartController {
 
     @RequestMapping(value = "/getList", method = RequestMethod.GET)
     @ResponseBody
-    public HttpResult<CartVo> addProductToCart(HttpSession session) {
+    public HttpResult<CartVo> getList(HttpSession session) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
@@ -65,4 +65,45 @@ public class CartController {
         }
         return cartService.deleteProduct(user.getId(), productIds);
     }
+
+    @RequestMapping(value = "/selectAll", method = RequestMethod.POST)
+    @ResponseBody
+    public HttpResult<CartVo> selectAll(HttpSession session) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
+        }
+        return cartService.selectAll(user.getId(), null, Const.Cart.CHECKED);
+    }
+
+    @RequestMapping(value = "/unSelectAll", method = RequestMethod.POST)
+    @ResponseBody
+    public HttpResult<CartVo> unSelectAll(HttpSession session) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
+        }
+        return cartService.selectAll(user.getId(), null, Const.Cart.UN_CHECKED);
+    }
+
+    @RequestMapping(value = "/select", method = RequestMethod.POST)
+    @ResponseBody
+    public HttpResult<CartVo> select(HttpSession session, Integer productId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
+        }
+        return cartService.selectAll(user.getId(), productId, Const.Cart.CHECKED);
+    }
+
+    @RequestMapping(value = "/unSelect", method = RequestMethod.POST)
+    @ResponseBody
+    public HttpResult<CartVo> unSelect(HttpSession session, Integer productId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
+        }
+        return cartService.selectAll(user.getId(), productId, Const.Cart.UN_CHECKED);
+    }
+
 }

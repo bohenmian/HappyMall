@@ -52,8 +52,7 @@ public class CartServiceImpl implements CartService {
             cart.setQuantity(count);
             cartMapper.updateByPrimaryKeySelective(cart);
         }
-        CartVo cartVo = this.getCartVoLimit(userId);
-        return HttpResult.createBySuccess(cartVo);
+        return this.getList(userId);
     }
 
     public HttpResult<CartVo> updateCart(Integer userId, Integer productId, Integer count) {
@@ -65,8 +64,7 @@ public class CartServiceImpl implements CartService {
             cart.setQuantity(count);
         }
         cartMapper.updateByPrimaryKeySelective(cart);
-        CartVo cartVo = this.getCartVoLimit(userId);
-        return HttpResult.createBySuccess(cartVo);
+        return this.getList(userId);
     }
 
     public HttpResult<CartVo> deleteProduct(Integer userId, String productIds) {
@@ -75,14 +73,19 @@ public class CartServiceImpl implements CartService {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.ILLEGAL_ARGUMENT.getCode(), HttpResultEnum.ILLEGAL_ARGUMENT.getDescrption());
         }
         cartMapper.deleteByUserIdAndProductId(userId, productList);
-        CartVo cartVo = this.getCartVoLimit(userId);
-        return HttpResult.createBySuccess(cartVo);
+        return this.getList(userId);
     }
 
     public HttpResult<CartVo> getList(Integer userId) {
         CartVo cartVo = this.getCartVoLimit(userId);
         return HttpResult.createBySuccess(cartVo);
     }
+
+    public HttpResult<CartVo> selectAll(Integer userId, Integer productId, Integer checked) {
+        cartMapper.checkedOrUnCheckedProduct(userId, productId, checked);
+        return this.getList(userId);
+    }
+
 
     private CartVo getCartVoLimit(Integer userId) {
         CartVo cartVo = new CartVo();

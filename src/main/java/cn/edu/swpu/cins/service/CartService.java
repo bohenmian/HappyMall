@@ -12,4 +12,7 @@ public interface CartService {
     HttpResult<CartVo> deleteProduct(Integer userId, String productIds);
 
     HttpResult<CartVo> getList(Integer userId);
+
+    HttpResult<CartVo> selectAll(Integer userId, Integer productId, Integer checked);
+
 }
