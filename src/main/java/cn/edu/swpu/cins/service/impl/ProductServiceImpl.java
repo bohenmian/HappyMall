@@ -12,7 +12,7 @@ import cn.edu.swpu.cins.entity.Category;
 import cn.edu.swpu.cins.entity.Product;
 import cn.edu.swpu.cins.enums.HttpResultEnum;
 import cn.edu.swpu.cins.enums.ProductStatusEnum;
-import cn.edu.swpu.cins.exception.ProductNoExitedException;
+import cn.edu.swpu.cins.exception.ProductNotExitedException;
 import cn.edu.swpu.cins.service.CategoryService;
 import cn.edu.swpu.cins.service.ProductService;
 import com.github.pagehelper.PageHelper;
@@ -89,7 +89,7 @@ public class ProductServiceImpl implements ProductService {
         }
         Product product = productMapper.selectByPrimaryKey(productId);
         if (product == null) {
-            throw new ProductNoExitedException("product not exit");
+            throw new ProductNotExitedException("product not exit");
         }
         ProductDetail productDetail = assembleProductDetail(product);
         return HttpResult.createBySuccess(productDetail);

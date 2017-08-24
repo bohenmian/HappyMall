@@ -6,9 +6,9 @@ import cn.edu.swpu.cins.dto.http.Const;
 import cn.edu.swpu.cins.dto.http.HttpResult;
 import cn.edu.swpu.cins.dto.http.TokenCache;
 import cn.edu.swpu.cins.entity.User;
-import cn.edu.swpu.cins.exception.EmailNoExitedException;
+import cn.edu.swpu.cins.exception.EmailNotExitedException;
 import cn.edu.swpu.cins.exception.HappyMallException;
-import cn.edu.swpu.cins.exception.UserNoExitedException;
+import cn.edu.swpu.cins.exception.UserNotExitedException;
 import cn.edu.swpu.cins.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     public HttpResult<User> login(String username, String password) {
         int resultCount = userMapper.checkUsername(username);
         if (resultCount == 0) {
-            throw new UserNoExitedException("user not exited");
+            throw new UserNotExitedException("user not exited");
         }
         String md5Password = MD5Config.MD5EncodeUtf8(password);
         User user = userMapper.checkPasswordByUsername(username, md5Password);
@@ -67,13 +67,13 @@ public class UserServiceImpl implements UserService {
             if (Const.USERNAME.equals(type)) {
                 int resultCount = userMapper.checkUsername(str);
                 if (resultCount > 0) {
-                    throw new UserNoExitedException("user not exited");
+                    throw new UserNotExitedException("user not exited");
                 }
             }
             if (Const.EMAIL.equals(type)) {
                 int resultCount = userMapper.checkEmail(str);
                 if (resultCount > 0) {
-                    throw new EmailNoExitedException("email not exited");
+                    throw new EmailNotExitedException("email not exited");
                 }
             }
         } else {
@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
     public HttpResult getQuestion(String username) {
         HttpResult result = this.checkValid(username, Const.USERNAME);
         if (result.isSuccess()) {
-            throw new UserNoExitedException("user not exited");
+            throw new UserNotExitedException("user not exited");
         }
         String question = userMapper.selectQuestionByUsername(username);
         if (StringUtils.isNotBlank(question)) {
@@ -111,7 +111,7 @@ public class UserServiceImpl implements UserService {
         }
         HttpResult result = this.checkValid(username, Const.USERNAME);
         if (result.isSuccess()) {
-            throw new UserNoExitedException("user not exited");
+            throw new UserNotExitedException("user not exited");
         }
         String token = TokenCache.getKey(TokenCache.TOKEN_PREFIX + username);
         if (StringUtils.isBlank(token)) {
@@ -147,7 +147,7 @@ public class UserServiceImpl implements UserService {
     public HttpResult<User> updateUser(User user) {
         int resultCount = userMapper.checkEmailByUserId(user.getEmail(), user.getId());
         if (resultCount > 0) {
-            throw new EmailNoExitedException("email not exited");
+            throw new EmailNotExitedException("email not exited");
         }
         User updateUser = new User();
         updateUser.setId(user.getId());
@@ -165,7 +165,7 @@ public class UserServiceImpl implements UserService {
     public HttpResult<User> getUserDetail(Integer userId) {
         User user = userMapper.selectByPrimaryKey(userId);
         if (user == null) {
-            throw new UserNoExitedException("user not exited");
+            throw new UserNotExitedException("user not exited");
         }
         return HttpResult.createBySuccess(user);
     }

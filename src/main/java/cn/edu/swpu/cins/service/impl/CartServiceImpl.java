@@ -11,13 +11,11 @@ import cn.edu.swpu.cins.dto.view.CartVo;
 import cn.edu.swpu.cins.entity.Cart;
 import cn.edu.swpu.cins.entity.Product;
 import cn.edu.swpu.cins.enums.HttpResultEnum;
-import cn.edu.swpu.cins.exception.UserNoExitedException;
+import cn.edu.swpu.cins.exception.UserNotExitedException;
 import cn.edu.swpu.cins.service.CartService;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,7 +90,7 @@ public class CartServiceImpl implements CartService {
 
     public HttpResult<Integer> getProductCount(Integer userId) {
         if (userId == null) {
-            throw new UserNoExitedException("user not exited");
+            throw new UserNotExitedException("user not exited");
         }
         return HttpResult.createBySuccess(cartMapper.selectCartProductCount(userId));
     }
