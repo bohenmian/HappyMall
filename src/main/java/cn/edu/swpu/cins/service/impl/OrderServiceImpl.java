@@ -76,7 +76,6 @@ public class OrderServiceImpl implements OrderService {
             goodsDetailList.add(goods);
 
         }
-
         // 创建扫码支付请求builder，设置请求参数
         AlipayTradePrecreateRequestBuilder builder = new AlipayTradePrecreateRequestBuilder()
                 .setSubject(subject).setTotalAmount(totalAmount).setOutTradeNo(outTradeNo)
