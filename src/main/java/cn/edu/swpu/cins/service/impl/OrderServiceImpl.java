@@ -1,13 +1,19 @@
 package cn.edu.swpu.cins.service.impl;
 
 import cn.edu.swpu.cins.config.BigDecimalConfig;
+import cn.edu.swpu.cins.config.DateTimeDeserializer;
 import cn.edu.swpu.cins.config.FtpConfig;
 import cn.edu.swpu.cins.config.PropertiesConfig;
 import cn.edu.swpu.cins.dao.OrderItemMapper;
 import cn.edu.swpu.cins.dao.OrderMapper;
+import cn.edu.swpu.cins.dao.PayInfoMapper;
+import cn.edu.swpu.cins.dto.http.Const;
 import cn.edu.swpu.cins.dto.http.HttpResult;
 import cn.edu.swpu.cins.entity.Order;
 import cn.edu.swpu.cins.entity.OrderItem;
+import cn.edu.swpu.cins.entity.PayInfo;
+import cn.edu.swpu.cins.enums.OrderStatusEnum;
+import cn.edu.swpu.cins.enums.PayPlatformEnum;
 import cn.edu.swpu.cins.exception.OrderNotExitedException;
 import cn.edu.swpu.cins.service.OrderService;
 import com.alipay.api.AlipayResponse;
@@ -41,11 +47,13 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderMapper orderMapper;
     private OrderItemMapper orderItemMapper;
+    private PayInfoMapper payInfoMapper;
 
     @Autowired
-    public OrderServiceImpl(OrderMapper orderMapper, OrderItemMapper orderItemMapper) {
+    public OrderServiceImpl(OrderMapper orderMapper, OrderItemMapper orderItemMapper, PayInfoMapper payInfoMapper) {
         this.orderMapper = orderMapper;
         this.orderItemMapper = orderItemMapper;
+        this.payInfoMapper = payInfoMapper;
     }
 
     public HttpResult pay(Long orderNo, Integer userId, String path) {
@@ -133,5 +141,31 @@ public class OrderServiceImpl implements OrderService {
             }
             logger.info("body:" + response.getBody());
         }
+    }
+
+    public HttpResult alipayCallback(Map<String, String> params) {
+        Long orderNo = Long.parseLong(params.get("out_trade_no"));
+        String tradeNo = params.get("trade_no");
+        String tradeStatus = params.get("trade_status");
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        if (order == null) {
+            throw new OrderNotExitedException("not happymall order, callback ignore");
+        }
+        if (order.getStatus() >= OrderStatusEnum.PAID.getCode()) {
+            return HttpResult.createBySuccess("alipay repeat request");
+        }
+        if (Const.AlipayCallback.TRADE_STATUS_TRADE_SUCCESS.equals(tradeStatus)) {
+            order.setPaymentTime(DateTimeDeserializer.stringToDate(params.get("gmt_payment")));
+            order.setStatus(OrderStatusEnum.PAID.getCode());
+            orderMapper.updateByPrimaryKeySelective(order);
+        }
+        PayInfo payInfo = new PayInfo();
+        payInfo.setUserId(order.getUserId());
+        payInfo.setOrderNo(orderNo);
+        payInfo.setPayPlatform(PayPlatformEnum.ALIPAY.getCode());
+        payInfo.setPlatformNumber(tradeNo);
+        payInfo.setPlatformStatus(tradeStatus);
+        payInfoMapper.insert(payInfo);
+        return HttpResult.createBySuccess();
     }
 }

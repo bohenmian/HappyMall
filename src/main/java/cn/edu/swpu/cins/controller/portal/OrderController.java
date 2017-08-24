@@ -75,6 +75,10 @@ public class OrderController {
             logger.error("alipay callback error");
         }
         //TODO validate return data
-        return null;
+        HttpResult httpResult = orderService.alipayCallback(params);
+        if (httpResult.isSuccess()) {
+            return Const.AlipayCallback.RESPONSE_SUCCESS;
+        }
+        return Const.AlipayCallback.RESPONSE_FAILED;
     }
 }
