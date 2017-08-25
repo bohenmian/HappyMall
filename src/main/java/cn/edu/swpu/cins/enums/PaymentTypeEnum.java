@@ -1,8 +1,10 @@
 package cn.edu.swpu.cins.enums;
 
+import cn.edu.swpu.cins.exception.HappyMallException;
+
 public enum PaymentTypeEnum {
 
-    ONLINE_PAY(1,"支付宝");
+    ONLINE_PAY(1,"在线支付");
     private int code;
     private String value;
 
@@ -25,5 +27,14 @@ public enum PaymentTypeEnum {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public static PaymentTypeEnum codeOf(int code){
+        for(PaymentTypeEnum paymentTypeEnum : values()){
+            if(paymentTypeEnum.getCode() == code){
+                return paymentTypeEnum;
+            }
+        }
+        throw new HappyMallException("not found payment type enum");
     }
 }
