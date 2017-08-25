@@ -43,7 +43,7 @@ public class OrderController {
         if (user == null) {
             return HttpResult.createByErrorMessage("user need login");
         }
-        return null;
+        return orderService.createOrder(user.getId(), shippingId);
     }
 
     @RequestMapping(value = "/pay", method = RequestMethod.POST)

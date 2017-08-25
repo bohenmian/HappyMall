@@ -3,12 +3,12 @@ package cn.edu.swpu.cins.dto.view;
 public class ShippingVo {
     private String receiverName;
     private String receiverPhone;
-    private String receiverMobile;
+    private Long receiverMobile;
     private String receiverProvince;
     private String receiverCity;
     private String receiverDistrict;
     private String receiverAddress;
-    private String receiverZip;
+    private Integer receiverZip;
 
     public String getReceiverName() {
         return receiverName;
@@ -26,11 +26,11 @@ public class ShippingVo {
         this.receiverPhone = receiverPhone;
     }
 
-    public String getReceiverMobile() {
+    public Long getReceiverMobile() {
         return receiverMobile;
     }
 
-    public void setReceiverMobile(String receiverMobile) {
+    public void setReceiverMobile(Long receiverMobile) {
         this.receiverMobile = receiverMobile;
     }
 
@@ -66,11 +66,11 @@ public class ShippingVo {
         this.receiverAddress = receiverAddress;
     }
 
-    public String getReceiverZip() {
+    public Integer getReceiverZip() {
         return receiverZip;
     }
 
-    public void setReceiverZip(String receiverZip) {
+    public void setReceiverZip(Integer receiverZip) {
         this.receiverZip = receiverZip;
     }
 }

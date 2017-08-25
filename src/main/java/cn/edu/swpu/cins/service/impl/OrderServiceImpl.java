@@ -87,7 +87,7 @@ public class OrderServiceImpl implements OrderService {
             return HttpResult.createByErrorMessage("cart is null");
         }
         for (OrderItem orderItem : orderItemList) {
-            orderItem.setOrderNo(orderItem.getOrderNo());
+            orderItem.setOrderNo(order.getOrderNo());
         }
         orderItemMapper.bactchInsert(orderItemList);
         this.reduceProductStock(orderItemList);
