@@ -52,7 +52,7 @@ public class OrderController {
     public Object alipayCallback(HttpServletRequest request) {
         Map<String, String> params = Maps.newHashMap();
         Map requestParams = request.getParameterMap();
-        for (Iterator iterator = requestParams.keySet().iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = requestParams.keySet().iterator(); iterator.hasNext() ; ) {
             String name = (String) iterator.next();
             String[] values = (String[]) requestParams.get(name);
             String valueStr = "";
@@ -74,11 +74,24 @@ public class OrderController {
         } catch (AlipayApiException e) {
             logger.error("alipay callback error");
         }
-        //TODO validate return data
         HttpResult httpResult = orderService.alipayCallback(params);
         if (httpResult.isSuccess()) {
             return Const.AlipayCallback.RESPONSE_SUCCESS;
         }
         return Const.AlipayCallback.RESPONSE_FAILED;
+    }
+
+    @RequestMapping(value = "/queryPayStatus", method = RequestMethod.POST)
+    @ResponseBody
+    public HttpResult<Boolean> queryPayStatus(HttpSession session, Long orderNo) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
+        }
+        HttpResult httpResult = orderService.queryOrderPayStatus(user.getId(), orderNo);
+        if (httpResult.isSuccess()) {
+            return HttpResult.createBySuccess(true);
+        }
+        return HttpResult.createBySuccess(false);
     }
 }

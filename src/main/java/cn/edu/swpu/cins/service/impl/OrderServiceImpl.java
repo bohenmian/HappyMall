@@ -168,4 +168,15 @@ public class OrderServiceImpl implements OrderService {
         payInfoMapper.insert(payInfo);
         return HttpResult.createBySuccess();
     }
+
+    public HttpResult queryOrderPayStatus(Integer userId, Long orderNo) {
+        Order order = orderMapper.selectByUserIdAndOrderNo(userId, orderNo);
+        if (order == null) {
+            throw new OrderNotExitedException("not happymall order");
+        }
+        if (order.getStatus() >= OrderStatusEnum.PAID.getCode()) {
+            return HttpResult.createBySuccess();
+        }
+        return HttpResult.createByError();
+    }
 }
