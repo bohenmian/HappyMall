@@ -7,6 +7,9 @@ import cn.edu.swpu.cins.config.PropertiesConfig;
 import cn.edu.swpu.cins.dao.*;
 import cn.edu.swpu.cins.dto.http.Const;
 import cn.edu.swpu.cins.dto.http.HttpResult;
+import cn.edu.swpu.cins.dto.view.OrderItemVo;
+import cn.edu.swpu.cins.dto.view.OrderVo;
+import cn.edu.swpu.cins.dto.view.ShippingVo;
 import cn.edu.swpu.cins.entity.*;
 import cn.edu.swpu.cins.enums.OrderStatusEnum;
 import cn.edu.swpu.cins.enums.PayPlatformEnum;
@@ -53,15 +56,18 @@ public class OrderServiceImpl implements OrderService {
     private PayInfoMapper payInfoMapper;
     private CartMapper cartMapper;
     private ProductMapper productMapper;
+    private ShippingMapper shippingMapper;
 
     @Autowired
     public OrderServiceImpl(OrderMapper orderMapper, OrderItemMapper orderItemMapper,
-                            PayInfoMapper payInfoMapper, CartMapper cartMapper, ProductMapper productMapper) {
+                            PayInfoMapper payInfoMapper, CartMapper cartMapper,
+                            ProductMapper productMapper, ShippingMapper shippingMapper) {
         this.orderMapper = orderMapper;
         this.orderItemMapper = orderItemMapper;
         this.payInfoMapper = payInfoMapper;
         this.cartMapper = cartMapper;
         this.productMapper = productMapper;
+        this.shippingMapper = shippingMapper;
     }
 
     @Transactional(rollbackFor = {DataAccessException.class})
@@ -85,7 +91,9 @@ public class OrderServiceImpl implements OrderService {
         }
         orderItemMapper.bactchInsert(orderItemList);
         this.reduceProductStock(orderItemList);
-        return null;
+        this.cleanCart(cartList);
+        OrderVo orderVo = this.assembleOrderVo(order, orderItemList);
+        return HttpResult.createBySuccess(orderVo);
     }
 
     private HttpResult<List<OrderItem>> getCartItem(Integer userId, List<Cart> cartList) {
@@ -150,6 +158,69 @@ public class OrderServiceImpl implements OrderService {
             product.setStock(product.getStock() - orderItem.getQuantity());
             productMapper.updateByPrimaryKey(product);
         }
+    }
+
+    private void cleanCart(List<Cart> cartList) {
+        for (Cart cart : cartList) {
+            cartMapper.deleteByPrimaryKey(cart.getId());
+        }
+    }
+
+    private OrderVo assembleOrderVo(Order order, List<OrderItem> orderItemList) {
+        OrderVo orderVo = new OrderVo();
+        orderVo.setOrderNo(order.getOrderNo());
+        orderVo.setPayment(order.getPayment());
+        orderVo.setPaymentType(order.getPaymentType());
+        orderVo.setPaymentTypeDesc("在线支付");
+        orderVo.setPaymentTypeDesc(PaymentTypeEnum.codeOf(order.getPaymentType()).getValue());
+        orderVo.setPostage(order.getPostage());
+        orderVo.setStatus(order.getStatus());
+        orderVo.setStatusDesc(OrderStatusEnum.codeOf(order.getStatus()).getValue());
+        orderVo.setShippingId(order.getShippingId());
+        Shipping shipping = shippingMapper.selectByPrimaryKey(order.getShippingId());
+        if (shipping != null) {
+            orderVo.setReceiverName(shipping.getReceiverName());
+            orderVo.setShippingVo(this.assembleShippingVo(shipping));
+        }
+        orderVo.setPaymentTime(DateTimeDeserializer.dateToStr(order.getPaymentTime()));
+        orderVo.setSendTime(DateTimeDeserializer.dateToStr(order.getSendTime()));
+        orderVo.setEndTime(DateTimeDeserializer.dateToStr(order.getEndTime()));
+        orderVo.setCreateTime(DateTimeDeserializer.dateToStr(order.getCreateTime()));
+        orderVo.setCloseTime(DateTimeDeserializer.dateToStr(order.getCloseTime()));
+        orderVo.setImageHost(PropertiesConfig.getProperties("ftp.server.http.prefix"));
+        List<OrderItemVo> orderItemVoList = Lists.newArrayList();
+        for (OrderItem orderItem : orderItemList) {
+            OrderItemVo orderItemVo = this.assembleOrderItemVo(orderItem);
+            orderItemVoList.add(orderItemVo);
+        }
+        orderVo.setOrderItemVoList(orderItemVoList);
+        return orderVo;
+    }
+
+    private OrderItemVo assembleOrderItemVo(OrderItem orderItem){
+        OrderItemVo orderItemVo = new OrderItemVo();
+        orderItemVo.setOrderNo(orderItem.getOrderNo());
+        orderItemVo.setProductId(orderItem.getProductId());
+        orderItemVo.setProductName(orderItem.getProductName());
+        orderItemVo.setProductImage(orderItem.getProductImage());
+        orderItemVo.setCurrentUnitPrice(orderItem.getCurrentUnitPrice());
+        orderItemVo.setQuantity(orderItem.getQuantity());
+        orderItemVo.setTotalPrice(orderItem.getTotalPrice());
+        orderItemVo.setCreateTime(DateTimeDeserializer.dateToStr(orderItem.getCreateTime()));
+        return orderItemVo;
+    }
+
+    private ShippingVo assembleShippingVo(Shipping shipping) {
+        ShippingVo shippingVo = new ShippingVo();
+        shippingVo.setReceiverName(shipping.getReceiverName());
+        shippingVo.setReceiverAddress(shipping.getReceiverAddress());
+        shippingVo.setReceiverProvince(shipping.getReceiverProvince());
+        shippingVo.setReceiverCity(shipping.getReceiverCity());
+        shippingVo.setReceiverDistrict(shipping.getReceiverDistrict());
+        shippingVo.setReceiverMobile(shipping.getReceiverMobile());
+        shippingVo.setReceiverZip(shipping.getReceiverZip());
+        shippingVo.setReceiverPhone(shippingVo.getReceiverPhone());
+        return shippingVo;
     }
 
     public HttpResult pay(Long orderNo, Integer userId, String path) {

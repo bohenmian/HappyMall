@@ -12,4 +12,6 @@ public interface OrderService {
 
     HttpResult queryOrderPayStatus(Integer userId, Long orderNo);
 
+    HttpResult createOrder(Integer userId, Integer shippingId);
+
 }
