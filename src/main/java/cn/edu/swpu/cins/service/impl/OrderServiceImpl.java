@@ -31,7 +31,9 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +41,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -61,6 +64,7 @@ public class OrderServiceImpl implements OrderService {
         this.productMapper = productMapper;
     }
 
+    @Transactional(rollbackFor = {DataAccessException.class})
     public HttpResult createOrder(Integer userId, Integer shippingId) {
         List<Cart> cartList = cartMapper.selectByUserId(userId);
         HttpResult httpResult = this.getCartItem(userId, cartList);
@@ -69,8 +73,18 @@ public class OrderServiceImpl implements OrderService {
         }
         List<OrderItem> orderItemList = (List<OrderItem>) httpResult.getData();
         BigDecimal payment = this.getOrderTotalPrice(orderItemList);
-//        Order order =
-        //TODO
+        Order order = this.assembleOrder(userId, shippingId, payment);
+        if (order == null) {
+            return HttpResult.createByErrorMessage("create order fail");
+        }
+        if (CollectionUtils.isEmpty(orderItemList)) {
+            return HttpResult.createByErrorMessage("cart is null");
+        }
+        for (OrderItem orderItem : orderItemList) {
+            orderItem.setOrderNo(orderItem.getOrderNo());
+        }
+        orderItemMapper.bactchInsert(orderItemList);
+        this.reduceProductStock(orderItemList);
         return null;
     }
 
@@ -103,7 +117,7 @@ public class OrderServiceImpl implements OrderService {
     private BigDecimal getOrderTotalPrice(List<OrderItem> orderItemList) {
         BigDecimal payment = new BigDecimal("0");
         for (OrderItem orderItem : orderItemList) {
-            BigDecimalConfig.add(payment.doubleValue(), orderItem.getTotalPrice().doubleValue());
+            payment = BigDecimalConfig.add(payment.doubleValue(), orderItem.getTotalPrice().doubleValue());
         }
         return payment;
     }
@@ -118,13 +132,24 @@ public class OrderServiceImpl implements OrderService {
         order.setPayment(payment);
         order.setUserId(userId);
         order.setShippingId(shippingId);
-        //TODO
-        return order;
+        int rowCount = orderMapper.insert(order);
+        if (rowCount > 0) {
+            return order;
+        }
+        return null;
     }
 
     private long generateOrderNo() {
         long currentTime = System.currentTimeMillis();
-        return currentTime + currentTime % 9;
+        return currentTime + new Random().nextInt(100);
+    }
+
+    private void reduceProductStock(List<OrderItem> orderItemList) {
+        for (OrderItem orderItem : orderItemList) {
+            Product product = productMapper.selectByPrimaryKey(orderItem.getProductId());
+            product.setStock(product.getStock() - orderItem.getQuantity());
+            productMapper.updateByPrimaryKey(product);
+        }
     }
 
     public HttpResult pay(Long orderNo, Integer userId, String path) {
