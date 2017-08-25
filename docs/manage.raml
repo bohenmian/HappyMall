@@ -65,6 +65,209 @@ description: RESTful APIs of happymall
                     "status": 0,
                     "msg": "add product success"
                   }
+    /setStatus:
+      description: update product status
+      post:
+        description: set product status
+        queryParameters:
+          Product:
+            type: Product
+            required: true
+        responses:
+          404:
+            description: false
+            body:
+              application/json:
+                example:
+                  {
+                    "status": 1,
+                    "msg": "update product status fail"
+                  }
+          200:
+            description: success
+            body:
+              application/json:
+                example:
+                  {
+                    "status": 0,
+                    "msg": "update product status success"
+                  }
+    /getDetail:
+      description: get product detail
+      get:
+        description: get product detail
+        queryParameters:
+          productId:
+            type: integer
+            required: true
+        responses:
+          404:
+            description: false
+            body:
+              application/json:
+                example:
+                  {
+                    "status": 1,
+                    "msg": get product detail fail
+                  }
+          200:
+            description: success
+            body:
+              application/json:
+                example:
+                  {
+                    status: 1,
+                    "data": {
+                      "id": 2,
+                      "categoryId": 2,
+                      "parentCategoryId":1,
+                      "name": "oppo R8",
+                      "subtitle": "oppo促销进行中",
+                      "imageHost": "http://img.happymmall.com/",
+                      "mainImage": "mainimage.jpg",
+                      "subImages": "[\"mmall/aa.jpg\",\"mmall/bb.jpg\",\"mmall/cc.jpg\",\"mmall/dd.jpg\",\"mmall/ee.jpg\"]",
+                      "detail": "richtext",
+                      "price": 2999.11,
+                      "stock": 71,
+                      "status": 1,
+                      "createTime": "2016-11-20 14:21:53",
+                      "updateTime": "2016-11-20 14:21:53"
+                    }
+                  }
+    /getProductList:
+      description: get product list
+      get:
+        description: get product list
+        queryParameters:
+          pageNum:
+            type: integer
+          pageSize:
+            type: integer
+        responses:
+          404:
+            description: false
+            body:
+              application/json:
+                example:
+                  {
+                    "status": 1,
+                    "msg": "get product list fail"
+                  }
+          200:
+            description:
+            body:
+              application/json:
+                example:
+                  {
+                    "status": 0,
+                    "data": {
+                      "pageNum": 1,
+                      "pageSize": 10,
+                      "size": 2,
+                      "orderBy": null,
+                      "startRow": 1,
+                      "endRow": 2,
+                      "total": 2,
+                      "pages": 1,
+                      "list": [
+                        {
+                          "id": 1,
+                          "categoryId": 3,
+                          "name": "iphone7",
+                          "subtitle": "双十一促销",
+                          "mainImage": "mainimage.jpg",
+                          "status":1,
+                          "price": 7199.22
+                        },
+                        {
+                          "id": 2,
+                          "categoryId": 2,
+                          "name": "oppo R8",
+                          "subtitle": "oppo促销进行中",
+                          "mainImage": "mainimage.jpg",
+                          "status":1,
+                          "price": 2999.11
+                        }
+                      ],
+                      "firstPage": 1,
+                      "prePage": 0,
+                      "nextPage": 0,
+                      "lastPage": 1,
+                      "isFirstPage": true,
+                      "isLastPage": true,
+                      "hasPreviousPage": false,
+                      "hasNextPage": false,
+                      "navigatePages": 8,
+                      "navigatepageNums": [
+                              1
+                      ]
+                    }
+                  }
+    /searchProduct:
+      description:
+      get:
+        description: search product
+        queryParameters:
+          productName:
+            type: string
+            required: true
+          productId:
+            type: integer
+            required: true
+          pageNum:
+            type: integer
+          pageSize:
+            type: integer
+        responses:
+          404:
+            description: false
+            body:
+              application/json:
+                example:
+                  {
+                    "status": 10,
+                    "msg": "user need login"
+                  }
+          200:
+            description:
+            body:
+              application/json:
+                example:
+                  {
+                    "status": 0,
+                    "data": {
+                      "pageNum": 1,
+                      "pageSize": 10,
+                      "size": 1,
+                      "orderBy": null,
+                      "startRow": 1,
+                      "endRow": 1,
+                      "total": 1,
+                      "pages": 1,
+                      "list": [
+                        {
+                          "id": 1,
+                          "categoryId": 3,
+                          "name": "iphone7",
+                          "subtitle": "双十一促销",
+                          "mainImage": "mainimage.jpg",
+                          "price": 7199.22
+                        }
+                      ],
+                      "firstPage": 1,
+                      "prePage": 0,
+                      "nextPage": 0,
+                      "lastPage": 1,
+                      "isFirstPage": true,
+                      "isLastPage": true,
+                      "hasPreviousPage": false,
+                      "hasNextPage": false,
+                      "navigatePages": 8,
+                      "navigatepageNums": [
+                              1
+                      ]
+                    }
+                  }
   /category:
     /addCategory:
       description: user and a category
