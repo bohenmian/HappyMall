@@ -1,0 +1,245 @@
+#%RAML 1.0
+title: happy mall
+version: 1.0
+description: RESTful APIs of happymall
+
+/shipping:
+  /addAdress:
+    description: add shipping address
+    post:
+      description: add shipping address
+      queryParameters:
+        Shipping:
+          type: Shipping
+          required: true
+      responses:
+        404:
+          description: false
+          body:
+            application/json:
+              example:
+                {
+                  "status": 1,
+                  "msg": "add address fail"
+                }
+        200:
+          description: success
+          body:
+            application/json:
+              example:
+                {
+                  "status": 0,
+                  "msg": "add address success",
+                  "data": {
+                      "shipping": 28
+                  }
+                }
+  /deleteAdress:
+    description: delete shipping address
+    delete:
+      description: delete shipping address
+      queryParameters:
+        shippingid:
+          type: integer
+          required: true
+      responses:
+        404:
+          description: false
+          body:
+            application/json:
+              example:
+                {
+                  "status": 1,
+                  "msg": "delete address fail"
+                }
+        200:
+          description: success
+          body:
+            application/json:
+              example:
+                {
+                  "status": 0,
+                  "msg": "delete address success",
+                }
+
+  /selectAdress:
+    description: delete shipping address
+    get:
+      description: delete shipping address
+      queryParameters:
+        shippingid:
+          type: integer
+          required: true
+      responses:
+        404:
+          description: false
+          body:
+            application/json:
+              example:
+                {
+                  "status": 1,
+                  "msg": "select address fail"
+                }
+        200:
+          description: success
+          body:
+            application/json:
+              example:
+                {
+                  "status": 0,
+                  "msg": "select address success",
+                  "data": {
+                    "id": 4,
+                    "userId": 13,
+                    "receiverName": "geely",
+                    "receiverPhone": "010",
+                    "receiverMobile": "18688888888",
+                    "receiverProvince": "北京",
+                    "receiverCity": "北京市",
+                    "receiverAddress": "中关村",
+                    "receiverZip": "100000",
+                    "createTime": 1485066385000,
+                    "updateTime": 1485066385000
+                  }
+                }
+  /getList:
+    description: get shipping address list
+    get:
+      description: get shipping address
+      queryParameters:
+        pageNum:
+          type: integer
+        pageSize:
+          type: integer
+      responses:
+        404:
+          description: false
+          body:
+            application/json:
+              example:
+                {
+                  "status": 1,
+                  "msg": "need to login"
+                }
+        200:
+          description: success
+          body:
+            application/json:
+              example:
+                {
+                  "status": 0,
+                  "data": {
+                    "pageNum": 1,
+                    "pageSize": 10,
+                    "size": 2,
+                    "orderBy": null,
+                    "startRow": 1,
+                    "endRow": 2,
+                    "total": 2,
+                    "pages": 1,
+                    "list": [
+                      {
+                        "id": 4,
+                        "userId": 13,
+                        "receiverName": "geely",
+                        "receiverPhone": "010",
+                        "receiverMobile": "18688888888",
+                        "receiverProvince": "北京",
+                        "receiverCity": "北京市",
+                        "receiverAddress": "中关村",
+                        "receiverZip": "100000",
+                        "createTime": 1485066385000,
+                        "updateTime": 1485066385000
+                      },
+                      {
+                        "id": 5,
+                        "userId": 13,
+                        "receiverName": "AAA",
+                        "receiverPhone": "010",
+                        "receiverMobile": "18688888888",
+                        "receiverProvince": "北京",
+                        "receiverCity": "北京市",
+                        "receiverAddress": "中关村",
+                        "receiverZip": "100000",
+                        "createTime": 1485066392000,
+                        "updateTime": 1485075875000
+                      }
+                    ],
+                    "firstPage": 1,
+                    "prePage": 0,
+                    "nextPage": 0,
+                    "lastPage": 1,
+                    "isFirstPage": true,
+                    "isLastPage": true,
+                    "hasPreviousPage": false,
+                    "hasNextPage": false,
+                    "navigatePages": 8,
+                    "navigatepageNums": [
+                              1
+                    ]
+                  }
+                }
+
+  /updateAdress:
+    description: update shipping address
+    put:
+      description: update shipping address
+      queryParameters:
+        Shipping:
+          type: Shipping
+          required: true
+      responses:
+        404:
+          description: false
+          body:
+            application/json:
+              example:
+                {
+                  "status": 1,
+                  "msg": "update address fail"
+                }
+        200:
+          description: success
+          body:
+            application/json:
+              example:
+                {
+                  "status": 0,
+                  "msg": "update address success",
+                }
+
+
+types:
+  Shipping:
+    type: object
+    properties:
+      userId:
+        description: user id
+        type: integer
+        required: true
+      receiverName:
+        description: user name
+        type: string
+        required: true
+      receiverPhone:
+        description: user phone
+        type: string
+      receiverMobile:
+        description: user mobile
+        type: string
+      receiverProvince:
+        description: user province
+        type: string
+        required: true
+      receiverCity:
+        description: user city
+        type: string
+        required: true
+      receiverAddress:
+        description: user address
+        type: string
+        required: true
+      receiverZip:
+        description: user zip
+        type: integer
+        required: true
