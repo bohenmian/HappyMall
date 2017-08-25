@@ -36,6 +36,16 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    @RequestMapping(value = "/createOrder", method = RequestMethod.POST)
+    @ResponseBody
+    public HttpResult createOrder(HttpSession session, Integer shippingId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorMessage("user need login");
+        }
+        return null;
+    }
+
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult pay(HttpSession session, Long orderNo, HttpServletRequest request) {

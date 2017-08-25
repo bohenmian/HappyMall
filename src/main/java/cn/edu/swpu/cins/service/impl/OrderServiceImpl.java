@@ -4,16 +4,14 @@ import cn.edu.swpu.cins.config.BigDecimalConfig;
 import cn.edu.swpu.cins.config.DateTimeDeserializer;
 import cn.edu.swpu.cins.config.FtpConfig;
 import cn.edu.swpu.cins.config.PropertiesConfig;
-import cn.edu.swpu.cins.dao.OrderItemMapper;
-import cn.edu.swpu.cins.dao.OrderMapper;
-import cn.edu.swpu.cins.dao.PayInfoMapper;
+import cn.edu.swpu.cins.dao.*;
 import cn.edu.swpu.cins.dto.http.Const;
 import cn.edu.swpu.cins.dto.http.HttpResult;
-import cn.edu.swpu.cins.entity.Order;
-import cn.edu.swpu.cins.entity.OrderItem;
-import cn.edu.swpu.cins.entity.PayInfo;
+import cn.edu.swpu.cins.entity.*;
 import cn.edu.swpu.cins.enums.OrderStatusEnum;
 import cn.edu.swpu.cins.enums.PayPlatformEnum;
+import cn.edu.swpu.cins.enums.PaymentTypeEnum;
+import cn.edu.swpu.cins.enums.ProductStatusEnum;
 import cn.edu.swpu.cins.exception.OrderNotExitedException;
 import cn.edu.swpu.cins.service.OrderService;
 import com.alipay.api.AlipayResponse;
@@ -28,6 +26,7 @@ import com.alipay.demo.trade.service.impl.AlipayTradeServiceImpl;
 import com.alipay.demo.trade.utils.ZxingUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,12 +48,83 @@ public class OrderServiceImpl implements OrderService {
     private OrderMapper orderMapper;
     private OrderItemMapper orderItemMapper;
     private PayInfoMapper payInfoMapper;
+    private CartMapper cartMapper;
+    private ProductMapper productMapper;
 
     @Autowired
-    public OrderServiceImpl(OrderMapper orderMapper, OrderItemMapper orderItemMapper, PayInfoMapper payInfoMapper) {
+    public OrderServiceImpl(OrderMapper orderMapper, OrderItemMapper orderItemMapper,
+                            PayInfoMapper payInfoMapper, CartMapper cartMapper, ProductMapper productMapper) {
         this.orderMapper = orderMapper;
         this.orderItemMapper = orderItemMapper;
         this.payInfoMapper = payInfoMapper;
+        this.cartMapper = cartMapper;
+        this.productMapper = productMapper;
+    }
+
+    public HttpResult createOrder(Integer userId, Integer shippingId) {
+        List<Cart> cartList = cartMapper.selectByUserId(userId);
+        HttpResult httpResult = this.getCartItem(userId, cartList);
+        if (!httpResult.isSuccess()) {
+            return httpResult;
+        }
+        List<OrderItem> orderItemList = (List<OrderItem>) httpResult.getData();
+        BigDecimal payment = this.getOrderTotalPrice(orderItemList);
+//        Order order =
+        //TODO
+        return null;
+    }
+
+    private HttpResult<List<OrderItem>> getCartItem(Integer userId, List<Cart> cartList) {
+        List<OrderItem> orderItemList = Lists.newArrayList();
+        if (CollectionUtils.isEmpty(cartList)) {
+            return HttpResult.createByErrorMessage("cart is null");
+        }
+        for (Cart cartItem : cartList) {
+            OrderItem orderItem = new OrderItem();
+            Product product = productMapper.selectByPrimaryKey(cartItem.getProductId());
+            if (ProductStatusEnum.ON_SALE.getCode() != product.getStatus()) {
+                return HttpResult.createByErrorMessage(product.getName() + "not on sale");
+            }
+            if (cartItem.getQuantity() > product.getStock()) {
+                return HttpResult.createByErrorMessage(product.getName() + "shortage of stock");
+            }
+            orderItem.setUserId(userId);
+            orderItem.setProductId(product.getId());
+            orderItem.setProductName(product.getName());
+            orderItem.setProductImage(product.getMainImage());
+            orderItem.setCurrentUnitPrice(product.getPrice());
+            orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setTotalPrice(BigDecimalConfig.mul(product.getPrice().doubleValue(), cartItem.getQuantity()));
+            orderItemList.add(orderItem);
+        }
+        return HttpResult.createBySuccess(orderItemList);
+    }
+
+    private BigDecimal getOrderTotalPrice(List<OrderItem> orderItemList) {
+        BigDecimal payment = new BigDecimal("0");
+        for (OrderItem orderItem : orderItemList) {
+            BigDecimalConfig.add(payment.doubleValue(), orderItem.getTotalPrice().doubleValue());
+        }
+        return payment;
+    }
+
+    private Order assembleOrder(Integer userId, Integer shippingId, BigDecimal payment) {
+        Order order = new Order();
+        long orderNo = this.generateOrderNo();
+        order.setOrderNo(orderNo);
+        order.setStatus(OrderStatusEnum.NO_PAY.getCode());
+        order.setPostage(0);
+        order.setPaymentType(PaymentTypeEnum.ONLINE_PAY.getCode());
+        order.setPayment(payment);
+        order.setUserId(userId);
+        order.setShippingId(shippingId);
+        //TODO
+        return order;
+    }
+
+    private long generateOrderNo() {
+        long currentTime = System.currentTimeMillis();
+        return currentTime + currentTime % 9;
     }
 
     public HttpResult pay(Long orderNo, Integer userId, String path) {
