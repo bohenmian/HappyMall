@@ -14,4 +14,6 @@ public interface OrderService {
 
     HttpResult createOrder(Integer userId, Integer shippingId);
 
+    HttpResult<String> cancelOrder(Integer userId, Long orderNo);
+
 }

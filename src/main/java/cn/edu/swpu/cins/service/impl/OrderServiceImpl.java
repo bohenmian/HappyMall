@@ -310,6 +310,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+
     public HttpResult alipayCallback(Map<String, String> params) {
         Long orderNo = Long.parseLong(params.get("out_trade_no"));
         String tradeNo = params.get("trade_no");
@@ -342,6 +343,24 @@ public class OrderServiceImpl implements OrderService {
             throw new OrderNotExitedException("not happymall order");
         }
         if (order.getStatus() >= OrderStatusEnum.PAID.getCode()) {
+            return HttpResult.createBySuccess();
+        }
+        return HttpResult.createByError();
+    }
+
+    public HttpResult<String> cancelOrder(Integer userId, Long orderNo) {
+        Order order = orderMapper.selectByUserIdAndOrderNo(userId, orderNo);
+        if (order == null) {
+            throw new OrderNotExitedException("order not exited");
+        }
+        if (order.getStatus() != OrderStatusEnum.NO_PAY.getCode()) {
+            throw new OrderNotExitedException("order has pay");
+        }
+        Order updateOrder = new Order();
+        updateOrder.setId(order.getId());
+        updateOrder.setStatus(OrderStatusEnum.CANCELED.getCode());
+        int row = orderMapper.updateByPrimaryKeySelective(updateOrder);
+        if (row > 0) {
             return HttpResult.createBySuccess();
         }
         return HttpResult.createByError();
