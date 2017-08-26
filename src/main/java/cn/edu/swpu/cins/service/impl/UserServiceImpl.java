@@ -147,7 +147,7 @@ public class UserServiceImpl implements UserService {
     public HttpResult<User> updateUser(User user) {
         int resultCount = userMapper.checkEmailByUserId(user.getEmail(), user.getId());
         if (resultCount > 0) {
-            throw new EmailNotExitedException("email not exited");
+            throw new EmailNotExitedException("email is exited");
         }
         User updateUser = new User();
         updateUser.setId(user.getId());

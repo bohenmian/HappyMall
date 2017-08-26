@@ -36,27 +36,6 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @RequestMapping(value = "/createOrder", method = RequestMethod.POST)
-    @ResponseBody
-    public HttpResult createOrder(HttpSession session, Integer shippingId) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return HttpResult.createByErrorMessage("user need login");
-        }
-        return orderService.createOrder(user.getId(), shippingId);
-    }
-
-    @RequestMapping(value = "/cancelOrder", method = RequestMethod.POST)
-    @ResponseBody
-    public HttpResult cancelOrder(HttpSession session, Long orderNo) {
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if (user == null) {
-            return HttpResult.createByErrorMessage("user need login");
-        }
-        return orderService.cancelOrder(user.getId(), orderNo);
-
-    }
-
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult pay(HttpSession session, Long orderNo, HttpServletRequest request) {
@@ -115,4 +94,25 @@ public class OrderController {
         }
         return HttpResult.createBySuccess(false);
     }
+
+    @RequestMapping(value = "/createOrder", method = RequestMethod.POST)
+    @ResponseBody
+    public HttpResult createOrder(HttpSession session, Integer shippingId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorMessage("user need login");
+        }
+        return orderService.createOrder(user.getId(), shippingId);
+    }
+
+    @RequestMapping(value = "/cancelOrder", method = RequestMethod.POST)
+    @ResponseBody
+    public HttpResult cancelOrder(HttpSession session, Long orderNo) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorMessage("user need login");
+        }
+        return orderService.cancelOrder(user.getId(), orderNo);
+    }
+
 }

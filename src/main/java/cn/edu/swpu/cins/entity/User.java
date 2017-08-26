@@ -38,6 +38,11 @@ public class User {
         this.updateTime = updateTime;
     }
 
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
     public User() {
         super();
     }
