@@ -67,13 +67,13 @@ public class UserServiceImpl implements UserService {
             if (Const.USERNAME.equals(type)) {
                 int resultCount = userMapper.checkUsername(str);
                 if (resultCount > 0) {
-                    throw new UserNotExitedException("user not exited");
+                    throw new UserNotExitedException("user has exited");
                 }
             }
             if (Const.EMAIL.equals(type)) {
                 int resultCount = userMapper.checkEmail(str);
                 if (resultCount > 0) {
-                    throw new EmailNotExitedException("email not exited");
+                    throw new EmailNotExitedException("email has exited");
                 }
             }
         } else {
