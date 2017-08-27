@@ -53,13 +53,13 @@ public class ProductManageController {
 
     @RequestMapping(value = "/setStatus", method = RequestMethod.POST)
     @ResponseBody
-    public HttpResult setSaleStatus(HttpSession session, @RequestBody Product product) {
+    public HttpResult setSaleStatus(HttpSession session, Integer productId, Integer status) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), "user need login");
         }
         if (userService.checkAdminRole(user).isSuccess()) {
-            return productService.setSaleStatus(product.getId(), product.getStatus());
+            return productService.setSaleStatus(productId, status);
         } else {
             return HttpResult.createByErrorMessage("set product status need admin authority");
         }
