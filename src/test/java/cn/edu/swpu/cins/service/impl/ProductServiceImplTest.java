@@ -136,5 +136,4 @@ public class ProductServiceImplTest {
         assertThat(result.getStatus(), is(0));
         verify(productMapper).selectByPrimaryKey(productId);
     }
-
 }
