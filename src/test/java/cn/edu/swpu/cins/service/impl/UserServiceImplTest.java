@@ -2,7 +2,6 @@ package cn.edu.swpu.cins.service.impl;
 
 import cn.edu.swpu.cins.config.MD5Config;
 import cn.edu.swpu.cins.dao.UserMapper;
-import cn.edu.swpu.cins.dto.http.Const;
 import cn.edu.swpu.cins.dto.http.HttpResult;
 import cn.edu.swpu.cins.entity.User;
 import cn.edu.swpu.cins.service.UserService;
@@ -15,12 +14,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
-
 
     @Mock
     private UserMapper userMapper;
@@ -59,14 +58,17 @@ public class UserServiceImplTest {
 
     @Test
     public void test_resetPassword_success() throws Exception {
-        Integer id = 2;
-        String username = "username";
         String password = "password";
-        String email = "bohenmian@gmail.com";
-        String phone = "13541552447";
-        String question = "123";
-        String answer = "123";
-        User user = new User(id, username, password, email, phone, question, answer, 1, null, null);
+        User user = mock(User.class);
+        when(user.getId()).thenReturn(2);
+        when(user.getUsername()).thenReturn("username");
+        when(user.getPassword()).thenReturn("password");
+        when(user.getEmail()).thenReturn("email");
+        when(user.getPhone()).thenReturn("13541552447");
+        when(user.getQuestion()).thenReturn("123");
+        when(user.getAnswer()).thenReturn("123");
+        when(user.getCreateTime()).thenReturn(null);
+        when(user.getUpdateTime()).thenReturn(null);
         String newPassword = "newPassword";
         when(userMapper.checkPassword(MD5Config.MD5EncodeUtf8(password), user.getId())).thenReturn(1);
         user.setPassword(MD5Config.MD5EncodeUtf8(newPassword));
@@ -80,18 +82,19 @@ public class UserServiceImplTest {
     @Test
     public void test_getUserDetail_success() throws Exception {
         Integer userId = 2;
-        Integer id = 2;
-        String username = "username";
-        String password = "password";
-        String email = "bohenmian@gmail.com";
-        String phone = "13541552447";
-        String question = "123";
-        String answer = "123";
-        User user = new User(id, username, password, email, phone, question, answer, Const.Role.ROLE_CUSTOMER, null, null);
+        User user = mock(User.class);
+        when(user.getId()).thenReturn(2);
+        when(user.getUsername()).thenReturn("username");
+        when(user.getPassword()).thenReturn("password");
+        when(user.getEmail()).thenReturn("email");
+        when(user.getPhone()).thenReturn("13541552447");
+        when(user.getQuestion()).thenReturn("123");
+        when(user.getAnswer()).thenReturn("123");
+        when(user.getCreateTime()).thenReturn(null);
+        when(user.getUpdateTime()).thenReturn(null);
         when(userMapper.selectByPrimaryKey(userId)).thenReturn(user);
         HttpResult result = userService.getUserDetail(userId);
         assertThat(result.getStatus(), is(0));
         verify(userMapper).selectByPrimaryKey(userId);
     }
-
 }
