@@ -31,6 +31,11 @@ public class Category {
         super();
     }
 
+    public Category(Integer parentId, String name) {
+        this.parentId = parentId;
+        this.name = name;
+    }
+
     public Integer getId() {
         return id;
     }

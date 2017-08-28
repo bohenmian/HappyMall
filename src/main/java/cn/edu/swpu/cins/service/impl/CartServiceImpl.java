@@ -65,8 +65,11 @@ public class CartServiceImpl implements CartService {
         if (cart != null) {
             cart.setQuantity(count);
         }
-        cartMapper.updateByPrimaryKeySelective(cart);
-        return this.getList(userId);
+        int rowCount = cartMapper.updateByPrimaryKeySelective(cart);
+        if (rowCount > 0) {
+            return this.getList(userId);
+        }
+        return HttpResult.createByErrorMessage("update cart fail");
     }
 
     public HttpResult<CartVo> deleteProduct(Integer userId, String productIds) {
@@ -74,8 +77,11 @@ public class CartServiceImpl implements CartService {
         if (CollectionUtils.isEmpty(productList)) {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.ILLEGAL_ARGUMENT.getCode(), HttpResultEnum.ILLEGAL_ARGUMENT.getDescrption());
         }
-        cartMapper.deleteByUserIdAndProductId(userId, productList);
-        return this.getList(userId);
+        int rowCount = cartMapper.deleteByUserIdAndProductId(userId, productList);
+        if (rowCount > 0) {
+            return this.getList(userId);
+        }
+        return HttpResult.createByErrorMessage("delete product fail");
     }
 
     public HttpResult<CartVo> getList(Integer userId) {
@@ -84,8 +90,11 @@ public class CartServiceImpl implements CartService {
     }
 
     public HttpResult<CartVo> selectAll(Integer userId, Integer productId, Integer checked) {
-        cartMapper.checkedOrUnCheckedProduct(userId, productId, checked);
-        return this.getList(userId);
+        int rowCount = cartMapper.checkedOrUnCheckedProduct(userId, productId, checked);
+        if (rowCount > 0) {
+            return this.getList(userId);
+        }
+        return HttpResult.createByErrorMessage("select product fail");
     }
 
     public HttpResult<Integer> getProductCount(Integer userId) {

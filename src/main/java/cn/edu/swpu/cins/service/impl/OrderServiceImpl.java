@@ -240,9 +240,8 @@ public class OrderServiceImpl implements OrderService {
         String storeId = "test_store_id";
         ExtendParams extendParams = new ExtendParams();
         extendParams.setSysServiceProviderId("2088100200300400500");
-        String timeoutExpress = "129m";
+        String timeoutExpress = "120m";
         List<GoodsDetail> goodsDetailList = new ArrayList<GoodsDetail>();
-
         List<OrderItem> orderItemList = orderItemMapper.getByOrderNoUserId(orderNo, userId);
         for (OrderItem orderItem : orderItemList) {
             GoodsDetail goods = GoodsDetail.newInstance(orderItem.getProductId().toString(), orderItem.getProductName(),
