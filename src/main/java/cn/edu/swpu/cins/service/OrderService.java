@@ -16,4 +16,6 @@ public interface OrderService {
 
     HttpResult<String> cancelOrder(Integer userId, Long orderNo);
 
+    HttpResult getOrderProduct(Integer userId);
+
 }

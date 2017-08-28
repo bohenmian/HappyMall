@@ -115,4 +115,14 @@ public class OrderController {
         return orderService.cancelOrder(user.getId(), orderNo);
     }
 
+    @RequestMapping(value = "/getOrderProduct", method = RequestMethod.GET)
+    @ResponseBody
+    public HttpResult getOrderProduct(HttpSession session, Long orderNo) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
+        }
+        return orderService.getOrderProduct(user.getId());
+    }
+
 }

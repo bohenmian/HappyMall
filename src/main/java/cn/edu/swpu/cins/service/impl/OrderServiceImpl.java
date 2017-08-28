@@ -8,6 +8,7 @@ import cn.edu.swpu.cins.dao.*;
 import cn.edu.swpu.cins.dto.http.Const;
 import cn.edu.swpu.cins.dto.http.HttpResult;
 import cn.edu.swpu.cins.dto.view.OrderItemVo;
+import cn.edu.swpu.cins.dto.view.OrderProductVo;
 import cn.edu.swpu.cins.dto.view.OrderVo;
 import cn.edu.swpu.cins.dto.view.ShippingVo;
 import cn.edu.swpu.cins.entity.*;
@@ -363,5 +364,25 @@ public class OrderServiceImpl implements OrderService {
             return HttpResult.createBySuccess();
         }
         return HttpResult.createByError();
+    }
+
+    public HttpResult getOrderProduct(Integer userId) {
+        OrderProductVo orderProductVo = new OrderProductVo();
+        List<Cart> cartList = cartMapper.selectCheckedByUserId(userId);
+        HttpResult result = this.getCartItem(userId, cartList);
+        if (!result.isSuccess()) {
+            return result;
+        }
+        List<OrderItem> orderItemList = (List<OrderItem>) result.getData();
+        List<OrderItemVo> orderItemVoList = Lists.newArrayList();
+        BigDecimal payment = new BigDecimal("0");
+        for (OrderItem orderItem : orderItemList) {
+            payment = BigDecimalConfig.add(payment.doubleValue(), orderItem.getTotalPrice().doubleValue());
+            orderItemVoList.add(assembleOrderItemVo(orderItem));
+        }
+        orderProductVo.setProductTotalPrice(payment);
+        orderProductVo.setOrderItemList(orderItemList);
+        orderProductVo.setImageHost(PropertiesConfig.getProperties("ftp.server.http.prefix"));
+        return HttpResult.createBySuccess(orderProductVo);
     }
 }
