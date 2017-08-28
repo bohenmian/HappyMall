@@ -30,4 +30,6 @@ public interface OrderService {
 
     HttpResult<PageInfo> searchOrder(Long orderNo, int pageNum, int pageSize);
 
+    HttpResult<String> sendGoods(Long orderNo);
+
 }

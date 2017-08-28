@@ -44,10 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -434,24 +431,39 @@ public class OrderServiceImpl implements OrderService {
     public HttpResult<OrderVo> getDetail(Long orderNo) {
         Order order = orderMapper.selectByOrderNo(orderNo);
         if (order == null) {
+            throw new OrderNotExitedException("order not exit");
+        } else {
             List<OrderItem> orderItemList = orderItemMapper.getByOrderNo(orderNo);
             OrderVo orderVo = assembleOrderVo(order, orderItemList);
             return HttpResult.createBySuccess(orderVo);
-        } else {
-            throw new OrderNotExitedException("order not exit");
         }
     }
 
     public HttpResult<PageInfo> searchOrder(Long orderNo, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         Order order = orderMapper.selectByOrderNo(orderNo);
-        if (order != null) {
+        if (order == null) {
+            throw new OrderNotExitedException("order not exit");
+        } else {
             List<OrderItem> orderItemList = orderItemMapper.getByOrderNo(orderNo);
             OrderVo orderVo = this.assembleOrderVo(order, orderItemList);
             PageInfo pageInfo = new PageInfo(Lists.newArrayList(order));
             pageInfo.setList(Lists.newArrayList(orderVo));
             return HttpResult.createBySuccess(pageInfo);
         }
-        throw new OrderNotExitedException("order not exit");
+    }
+
+    public HttpResult<String> sendGoods(Long orderNo) {
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        if (order == null) {
+            throw new OrderNotExitedException("order not exit");
+        } else {
+            if (order.getStatus() == OrderStatusEnum.PAID.getCode()) {
+                order.setStatus(OrderStatusEnum.SHIPPED.getCode());
+                order.setSendTime(new Date());
+                orderMapper.updateByPrimaryKeySelective(order);
+            }
+            return HttpResult.createBySuccess("send goods success");
+        }
     }
 }

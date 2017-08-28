@@ -76,17 +76,17 @@ public class OrderManageController {
         }
     }
 
-//    @RequestMapping(value = "sendGoods", method = RequestMethod.POST)
-//    @ResponseBody
-//    public HttpResult sendGoods(HttpSession session, Long orderNo) {
-//        User user = (User) session.getAttribute(Const.CURRENT_USER);
-//        if (user == null) {
-//            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
-//        }
-//        if (userService.checkAdminRole(user).isSuccess()) {
-//
-//        } else {
-//            return HttpResult.createByErrorMessage("need admin authority");
-//        }
-//    }
+    @RequestMapping(value = "sendGoods", method = RequestMethod.POST)
+    @ResponseBody
+    public HttpResult sendGoods(HttpSession session, Long orderNo) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
+        }
+        if (userService.checkAdminRole(user).isSuccess()) {
+            return orderService.sendGoods(orderNo);
+        } else {
+            return HttpResult.createByErrorMessage("need admin authority");
+        }
+    }
 }
