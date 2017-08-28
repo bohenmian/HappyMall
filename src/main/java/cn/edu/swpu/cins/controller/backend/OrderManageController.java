@@ -2,6 +2,7 @@ package cn.edu.swpu.cins.controller.backend;
 
 import cn.edu.swpu.cins.dto.http.Const;
 import cn.edu.swpu.cins.dto.http.HttpResult;
+import cn.edu.swpu.cins.dto.view.OrderVo;
 import cn.edu.swpu.cins.entity.User;
 import cn.edu.swpu.cins.enums.HttpResultEnum;
 import cn.edu.swpu.cins.service.OrderService;
@@ -40,6 +41,20 @@ public class OrderManageController {
         }
         if (userService.checkAdminRole(user).isSuccess()) {
             return orderService.getList(pageNum, pageSize);
+        } else {
+            return HttpResult.createByErrorMessage("need admin authority");
+        }
+    }
+
+    @RequestMapping(value = "/getDetail", method = RequestMethod.GET)
+    @ResponseBody
+    public HttpResult<OrderVo> getOrderDetail(HttpSession session, Long orderNo) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
+        }
+        if (userService.checkAdminRole(user).isSuccess()) {
+            return orderService.getDetail(orderNo);
         } else {
             return HttpResult.createByErrorMessage("need admin authority");
         }

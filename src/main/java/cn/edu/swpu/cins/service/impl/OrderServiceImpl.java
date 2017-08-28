@@ -395,7 +395,7 @@ public class OrderServiceImpl implements OrderService {
             OrderVo orderVo = assembleOrderVo(order, orderItemList);
             return HttpResult.createBySuccess(orderVo);
         }
-        return HttpResult.createByErrorMessage("nou found order");
+        throw new OrderNotExitedException("order not exit");
     }
 
     public HttpResult<PageInfo> getOrderList(Integer userId, int pageNum, int pageSize) {
@@ -429,5 +429,16 @@ public class OrderServiceImpl implements OrderService {
         PageInfo pageInfo = new PageInfo(orderList);
         pageInfo.setList(orderVoList);
         return HttpResult.createBySuccess(pageInfo);
+    }
+
+    public HttpResult<OrderVo> getDetail(Long orderNo) {
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        if (order == null) {
+            List<OrderItem> orderItemList = orderItemMapper.getByOrderNo(orderNo);
+            OrderVo orderVo = assembleOrderVo(order, orderItemList);
+            return HttpResult.createBySuccess(orderVo);
+        } else {
+            throw new OrderNotExitedException("order not exit");
+        }
     }
 }

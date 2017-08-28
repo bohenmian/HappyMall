@@ -26,4 +26,6 @@ public interface OrderService {
 
     HttpResult<PageInfo> getList(int pageNum, int pageSize);
 
+    HttpResult<OrderVo> getDetail(Long orderNo);
+
 }
