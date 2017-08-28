@@ -20,6 +20,8 @@ public interface OrderItemMapper {
 
     List<OrderItem> getByOrderNoUserId(@Param("orderNo") Long orderNo, @Param("userId") Integer userId);
 
+    List<OrderItem> getByOrderNo(Long orderNo);
+
     void bactchInsert(@Param("orderItemList") List<OrderItem> orderItemList);
 
 }

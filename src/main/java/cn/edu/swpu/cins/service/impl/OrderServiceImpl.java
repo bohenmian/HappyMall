@@ -412,7 +412,7 @@ public class OrderServiceImpl implements OrderService {
         for (Order order : orderList) {
             List<OrderItem> orderItemList = Lists.newArrayList();
             if (userId == null) {
-
+                orderItemList = orderItemMapper.getByOrderNo(order.getOrderNo());
             } else {
                 orderItemList = orderItemMapper.getByOrderNoUserId(order.getOrderNo(), userId);
             }
@@ -420,5 +420,14 @@ public class OrderServiceImpl implements OrderService {
             orderVoList.add(orderVo);
         }
         return orderVoList;
+    }
+
+    public HttpResult<PageInfo> getList(int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Order> orderList = orderMapper.getAll();
+        List<OrderVo> orderVoList = this.assembleOrderVoList(orderList, null);
+        PageInfo pageInfo = new PageInfo(orderList);
+        pageInfo.setList(orderVoList);
+        return HttpResult.createBySuccess(pageInfo);
     }
 }
