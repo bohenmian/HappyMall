@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -125,4 +126,25 @@ public class OrderController {
         return orderService.getOrderProduct(user.getId());
     }
 
+    @RequestMapping(value = "/getOrderDetail", method = RequestMethod.GET)
+    @ResponseBody
+    public HttpResult getOrderDetail(HttpSession session, Long orderNo) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
+        }
+        return orderService.getOrderDetail(user.getId(), orderNo);
+    }
+
+    @RequestMapping(value = "/getList", method = RequestMethod.GET)
+    @ResponseBody
+    public HttpResult getList(HttpSession session,
+                              @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                              @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
+        }
+        return orderService.getOrderList(user.getId(), pageNum, pageSize);
+    }
 }

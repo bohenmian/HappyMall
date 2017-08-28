@@ -1,6 +1,8 @@
 package cn.edu.swpu.cins.service;
 
 import cn.edu.swpu.cins.dto.http.HttpResult;
+import cn.edu.swpu.cins.dto.view.OrderVo;
+import com.github.pagehelper.PageInfo;
 
 import java.util.Map;
 
@@ -17,5 +19,9 @@ public interface OrderService {
     HttpResult<String> cancelOrder(Integer userId, Long orderNo);
 
     HttpResult getOrderProduct(Integer userId);
+
+    HttpResult<OrderVo> getOrderDetail(Integer userId, Long orderNo);
+
+    HttpResult<PageInfo> getOrderList(Integer userId, int pageNum, int pageSize);
 
 }
