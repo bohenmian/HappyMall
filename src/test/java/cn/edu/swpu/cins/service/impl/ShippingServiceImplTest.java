@@ -121,7 +121,6 @@ public class ShippingServiceImplTest {
         PageHelper.startPage(1, 10);
         List<Shipping> shippingList = singletonList(shipping);
         when(shippingMapper.selectByUserId(userId)).thenReturn(shippingList);
-        PageInfo pageInfo = new PageInfo(shippingList);
         HttpResult httpResult = shippingService.getList(userId, pageNum, pageSize);
         assertThat(httpResult.getStatus(), is(0));
         verify(shippingMapper).selectByUserId(userId);

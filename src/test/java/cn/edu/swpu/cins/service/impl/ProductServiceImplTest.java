@@ -43,7 +43,7 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    public void test_saveOrUpdateProduct_success() throws Exception {
+    public void test_when_product_exit_saveOrUpdateProduct_success() throws Exception {
         Product product = mock(Product.class);
         when(product.getId()).thenReturn(1);
         when(product.getCategoryId()).thenReturn(2);
@@ -60,6 +60,26 @@ public class ProductServiceImplTest {
         HttpResult result = productService.saveOrUpdateProduct(product);
         assertThat(result.getStatus(), is(0));
         verify(productMapper).updateByPrimaryKey(product);
+    }
+
+    @Test
+    public void test_when_product_not_exit_test_when_product_exit_saveOrUpdateProduct_success_success() {
+        Product product = mock(Product.class);
+        when(product.getId()).thenReturn(null);
+        when(product.getCategoryId()).thenReturn(2);
+        when(product.getName()).thenReturn("apple");
+        when(product.getSubtitle()).thenReturn("特价");
+        when(product.getSubImages()).thenReturn("123.jpg");
+        when(product.getDetail()).thenReturn("123");
+        when(product.getPrice()).thenReturn(BigDecimal.valueOf(12.33));
+        when(product.getStock()).thenReturn(10);
+        when(product.getStatus()).thenReturn(1);
+        when(product.getCreateTime()).thenReturn(null);
+        when(product.getUpdateTime()).thenReturn(null);
+        when(productMapper.insert(product)).thenReturn(1);
+        HttpResult result = productService.saveOrUpdateProduct(product);
+        assertThat(result.getStatus(), is(0));
+        verify(productMapper).insert(product);
     }
 
     @Test
@@ -101,7 +121,7 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    public void searchProduct() throws Exception {
+    public void test_searchProduct_success() throws Exception {
         String productName = "apple";
         Integer productId = 2;
         Integer pageNum = 1;
