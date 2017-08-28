@@ -441,4 +441,17 @@ public class OrderServiceImpl implements OrderService {
             throw new OrderNotExitedException("order not exit");
         }
     }
+
+    public HttpResult<PageInfo> searchOrder(Long orderNo, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        Order order = orderMapper.selectByOrderNo(orderNo);
+        if (order != null) {
+            List<OrderItem> orderItemList = orderItemMapper.getByOrderNo(orderNo);
+            OrderVo orderVo = this.assembleOrderVo(order, orderItemList);
+            PageInfo pageInfo = new PageInfo(Lists.newArrayList(order));
+            pageInfo.setList(Lists.newArrayList(orderVo));
+            return HttpResult.createBySuccess(pageInfo);
+        }
+        throw new OrderNotExitedException("order not exit");
+    }
 }

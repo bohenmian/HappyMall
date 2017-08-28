@@ -28,4 +28,6 @@ public interface OrderService {
 
     HttpResult<OrderVo> getDetail(Long orderNo);
 
+    HttpResult<PageInfo> searchOrder(Long orderNo, int pageNum, int pageSize);
+
 }

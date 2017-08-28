@@ -59,4 +59,34 @@ public class OrderManageController {
             return HttpResult.createByErrorMessage("need admin authority");
         }
     }
+
+    @RequestMapping(value = "searchOrder", method = RequestMethod.POST)
+    @ResponseBody
+    public HttpResult<PageInfo> searchOrder(HttpSession session, Long orderNo,
+                                           @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                           @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
+        }
+        if (userService.checkAdminRole(user).isSuccess()) {
+            return orderService.searchOrder(orderNo, pageNum, pageSize);
+        } else {
+            return HttpResult.createByErrorMessage("need admin authority");
+        }
+    }
+
+//    @RequestMapping(value = "sendGoods", method = RequestMethod.POST)
+//    @ResponseBody
+//    public HttpResult sendGoods(HttpSession session, Long orderNo) {
+//        User user = (User) session.getAttribute(Const.CURRENT_USER);
+//        if (user == null) {
+//            return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());
+//        }
+//        if (userService.checkAdminRole(user).isSuccess()) {
+//
+//        } else {
+//            return HttpResult.createByErrorMessage("need admin authority");
+//        }
+//    }
 }
