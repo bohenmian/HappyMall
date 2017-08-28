@@ -118,7 +118,7 @@ public class OrderController {
 
     @RequestMapping(value = "/getOrderProduct", method = RequestMethod.GET)
     @ResponseBody
-    public HttpResult getOrderProduct(HttpSession session, Long orderNo) {
+    public HttpResult getOrderProduct(HttpSession session) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return HttpResult.createByErrorCodeMessage(HttpResultEnum.NEED_LOGIN.getCode(), HttpResultEnum.NEED_LOGIN.getDescrption());

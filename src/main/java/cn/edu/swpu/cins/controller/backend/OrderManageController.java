@@ -60,7 +60,7 @@ public class OrderManageController {
         }
     }
 
-    @RequestMapping(value = "searchOrder", method = RequestMethod.POST)
+    @RequestMapping(value = "/searchOrder", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult<PageInfo> searchOrder(HttpSession session, Long orderNo,
                                            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
@@ -76,7 +76,7 @@ public class OrderManageController {
         }
     }
 
-    @RequestMapping(value = "sendGoods", method = RequestMethod.POST)
+    @RequestMapping(value = "/sendGoods", method = RequestMethod.POST)
     @ResponseBody
     public HttpResult sendGoods(HttpSession session, Long orderNo) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
