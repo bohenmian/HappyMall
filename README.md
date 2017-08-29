@@ -1,6 +1,5 @@
 # instruction
-
-"happymall商城————后端代码。
+"happymall商城————后端代码。[![Build Status](https://travis-ci.org/bohenmian/happymall.svg?branch=master)](https://travis-ci.org/bohenmian/happymall)
 
 # 使用技术
 
