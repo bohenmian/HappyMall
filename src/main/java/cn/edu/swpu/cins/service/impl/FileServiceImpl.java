@@ -21,7 +21,9 @@ public class FileServiceImpl implements FileService {
     @Transactional
     public String upload(MultipartFile file, String path) {
         String fileName = file.getOriginalFilename();
+        //或得fileName的后缀
         String fileExtensionName = fileName.substring(fileName.lastIndexOf(".") + 1);
+        //通过UUID生成文件名
         String uploadFileName = UUID.randomUUID().toString() + "." + fileExtensionName;
         logger.info("start upload file");
         logger.info("upload file name: {}", fileName);

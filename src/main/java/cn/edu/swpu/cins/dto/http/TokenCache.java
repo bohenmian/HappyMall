@@ -13,7 +13,10 @@ public class TokenCache {
 
     public static final String TOKEN_PREFIX = "token_";
 
-    private static LoadingCache<String, String> localCache = CacheBuilder.newBuilder().initialCapacity(1000).maximumSize(10000).expireAfterAccess(12, TimeUnit.HOURS)
+    private static LoadingCache<String, String> localCache = CacheBuilder.newBuilder().
+            initialCapacity(1000).
+            maximumSize(10000).
+            expireAfterAccess(12, TimeUnit.HOURS)
             .build(new CacheLoader<String, String>() {
                 @Override
                 public String load(String s) throws Exception {

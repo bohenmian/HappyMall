@@ -191,7 +191,7 @@ public class ProductServiceImpl implements ProductService {
                 PageInfo pageInfo = new PageInfo(productVoList);
                 return HttpResult.createBySuccess(pageInfo);
             }
-        categoryIdList = categoryService.getCategory(categoryId).getData();
+            categoryIdList = categoryService.getCategory(category.getId()).getData();
         }
         if (StringUtils.isNotBlank(keyword)) {
             keyword = new StringBuilder().append("%").append(keyword).append("%").toString();

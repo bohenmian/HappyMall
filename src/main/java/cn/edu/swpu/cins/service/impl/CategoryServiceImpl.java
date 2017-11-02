@@ -62,7 +62,7 @@ public class CategoryServiceImpl implements CategoryService {
     public HttpResult<List<Category>> getChildrenParallelCategory(Integer categoryId) {
         List<Category> list = categoryMapper.getCategoryByParentId(categoryId);
         if (CollectionUtils.isEmpty(list)) {
-            logger.info("Nof find children parallel category");
+            logger.info("Not find children parallel category");
         }
         return HttpResult.createBySuccess(list);
     }

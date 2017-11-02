@@ -70,6 +70,7 @@ public class OrderServiceImpl implements OrderService {
         this.shippingMapper = shippingMapper;
     }
 
+    @SuppressWarnings("unchecked")
     @Transactional(rollbackFor = {DataAccessException.class})
     public HttpResult createOrder(Integer userId, Integer shippingId) {
         List<Cart> cartList = cartMapper.selectByUserId(userId);
@@ -78,13 +79,13 @@ public class OrderServiceImpl implements OrderService {
             return httpResult;
         }
         List<OrderItem> orderItemList = (List<OrderItem>) httpResult.getData();
+        if (CollectionUtils.isEmpty(orderItemList)) {
+            return HttpResult.createByErrorMessage("cart is null");
+        }
         BigDecimal payment = this.getOrderTotalPrice(orderItemList);
         Order order = this.assembleOrder(userId, shippingId, payment);
         if (order == null) {
             return HttpResult.createByErrorMessage("create order fail");
-        }
-        if (CollectionUtils.isEmpty(orderItemList)) {
-            return HttpResult.createByErrorMessage("cart is null");
         }
         for (OrderItem orderItem : orderItemList) {
             orderItem.setOrderNo(order.getOrderNo());
@@ -96,6 +97,7 @@ public class OrderServiceImpl implements OrderService {
         return HttpResult.createBySuccess(orderVo);
     }
 
+    //获取购物车中的商品
     private HttpResult<List<OrderItem>> getCartItem(Integer userId, List<Cart> cartList) {
         List<OrderItem> orderItemList = Lists.newArrayList();
         if (CollectionUtils.isEmpty(cartList)) {
@@ -104,9 +106,11 @@ public class OrderServiceImpl implements OrderService {
         for (Cart cartItem : cartList) {
             OrderItem orderItem = new OrderItem();
             Product product = productMapper.selectByPrimaryKey(cartItem.getProductId());
+            //未在售卖状态
             if (ProductStatusEnum.ON_SALE.getCode() != product.getStatus()) {
                 return HttpResult.createByErrorMessage(product.getName() + "not on sale");
             }
+            //购物车数量大于库存数量
             if (cartItem.getQuantity() > product.getStock()) {
                 return HttpResult.createByErrorMessage(product.getName() + "shortage of stock");
             }
@@ -123,6 +127,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private BigDecimal getOrderTotalPrice(List<OrderItem> orderItemList) {
+        //BigDecimal用于精确计算
         BigDecimal payment = new BigDecimal("0");
         for (OrderItem orderItem : orderItemList) {
             payment = BigDecimalConfig.add(payment.doubleValue(), orderItem.getTotalPrice().doubleValue());
@@ -223,23 +228,30 @@ public class OrderServiceImpl implements OrderService {
         return shippingVo;
     }
 
+    //支付宝模块
     public HttpResult pay(Long orderNo, Integer userId, String path) {
         Map<String, String> resultMap = Maps.newHashMap();
-       Order order = orderMapper.selectByUserIdAndOrderNo(userId, orderNo);
+        Order order = orderMapper.selectByUserIdAndOrderNo(userId, orderNo);
         if (order == null) {
             throw new OrderNotExitedException("order not exited");
         }
         resultMap.put("orderNo", String.valueOf(order.getOrderNo()));
+        //订单号
         String outTradeNo = order.getOrderNo().toString();
         String subject = new StringBuilder().append("happymall扫码支付,订单号:").append(outTradeNo).toString();
+        //支付金额
         String totalAmount = order.getPayment().toString();
+        //优惠金额
         String undiscountableAmount = "0";
+        //卖家Id,用于顾客退货
         String sellerId = "";
         String body = new StringBuilder().append("订单").append(outTradeNo).append("购买商品共").append(totalAmount).append("元").toString();
         String operatorId = "test_operator_id";
         String storeId = "test_store_id";
         ExtendParams extendParams = new ExtendParams();
+        //服务号
         extendParams.setSysServiceProviderId("2088100200300400500");
+        //支付超时设置
         String timeoutExpress = "120m";
         List<GoodsDetail> goodsDetailList = new ArrayList<GoodsDetail>();
         List<OrderItem> orderItemList = orderItemMapper.getByOrderNoUserId(orderNo, userId);
@@ -258,7 +270,7 @@ public class OrderServiceImpl implements OrderService {
                 .setTimeoutExpress(timeoutExpress)
                 .setNotifyUrl(PropertiesConfig.getProperties("alipay.callback.url"))//支付宝服务器主动通知商户服务器里指定的页面http路径,根据需要设置
                 .setGoodsDetailList(goodsDetailList);
-
+        //支付宝配置文件
         Configs.init("zfbinfo.properties");
         AlipayTradeService tradeService = new AlipayTradeServiceImpl.ClientBuilder().build();
         AlipayF2FPrecreateResult result = tradeService.tradePrecreate(builder);
@@ -272,7 +284,7 @@ public class OrderServiceImpl implements OrderService {
                     file.setWritable(true);
                     file.mkdirs();
                 }
-                // 需要修改为运行机器上的路径
+                // 需要修改为运行机器上的路径,二维码上传路径
                 String qrPath = String.format(path + "/" + "qr-%s.png", response.getOutTradeNo());
                 String qrFileName = String.format("qr-%s.png", response.getOutTradeNo());
                 ZxingUtils.getQRCodeImge(response.getQrCode(), 256, qrPath);
@@ -308,8 +320,7 @@ public class OrderServiceImpl implements OrderService {
             logger.info("body:" + response.getBody());
         }
     }
-
-
+    //支付宝回调接口
     public HttpResult alipayCallback(Map<String, String> params) {
         Long orderNo = Long.parseLong(params.get("out_trade_no"));
         String tradeNo = params.get("trade_no");
